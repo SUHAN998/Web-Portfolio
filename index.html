@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#05070d" />
+  <title>Su Han — Portfolio</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+
+<body>
+  <canvas id="starfield" aria-hidden="true"></canvas>
+
+  <main id="app">
+    <!-- 01 / INTRO ------------------------------------------------------->
+    <section id="intro" class="scene intro-scene is-active" aria-label="Portfolio intro">
+      <canvas id="introParticles" class="intro-particles" aria-hidden="true"></canvas>
+
+      <div class="intro-center">
+        <div id="introLogo" class="brand-logo brand-logo--intro" aria-label="SH constellation logo">
+          <svg viewBox="0 0 240 200" role="img" aria-label="SH constellation">
+            <g class="constellation-lines">
+              <path d="M78 28 L37 36 L28 92 L76 108 L36 174" />
+              <path d="M130 30 L121 100 L136 176" />
+              <path d="M209 23 L198 106 L216 178" />
+              <path d="M121 100 L198 106" />
+            </g>
+            <g class="constellation-stars">
+              <circle cx="78" cy="28" r="5.2"/><circle cx="37" cy="36" r="3.7"/>
+              <circle cx="28" cy="92" r="4.7"/><circle cx="76" cy="108" r="3.8"/>
+              <circle cx="36" cy="174" r="5"/>
+              <circle cx="130" cy="30" r="6.4"/><circle cx="121" cy="100" r="5.8"/>
+              <circle cx="136" cy="176" r="5.2"/>
+              <circle cx="209" cy="23" r="5.8"/><circle cx="198" cy="106" r="6.1"/>
+              <circle cx="216" cy="178" r="5.4"/>
+            </g>
+          </svg>
+        </div>
+
+        <h1 class="intro-name">SU HAN</h1>
+        <p class="intro-keywords">OBSERVE&nbsp;&nbsp;·&nbsp;&nbsp;ANALYZE&nbsp;&nbsp;·&nbsp;&nbsp;REFINE&nbsp;&nbsp;·&nbsp;&nbsp;CLARIFY</p>
+        <p class="intro-philosophy">흩어진 문제를 연결해, 더 명확한 경험으로 정리합니다.</p>
+        <p class="intro-meta">SH CONSTELLATION</p>
+      </div>
+
+      <button id="introSkip" class="intro-skip" type="button">Intro Skip &gt;</button>
+    </section>
+
+    <!-- 02 / EXPLORE ----------------------------------------------------->
+    <section id="portfolio" class="scene portfolio-scene" aria-label="Portfolio projects">
+      <header class="site-header">
+        <a href="#" class="brand" aria-label="Su Han portfolio home">
+          <span id="headerLogo" class="brand-logo brand-logo--header">
+            <svg viewBox="0 0 240 200" aria-hidden="true">
+            <g class="constellation-lines">
+              <path d="M78 28 L37 36 L28 92 L76 108 L36 174" />
+              <path d="M130 30 L121 100 L136 176" />
+              <path d="M209 23 L198 106 L216 178" />
+              <path d="M121 100 L198 106" />
+            </g>
+            <g class="constellation-stars">
+              <circle cx="78" cy="28" r="5.2"/><circle cx="37" cy="36" r="3.7"/>
+              <circle cx="28" cy="92" r="4.7"/><circle cx="76" cy="108" r="3.8"/>
+              <circle cx="36" cy="174" r="5"/>
+              <circle cx="130" cy="30" r="6.4"/><circle cx="121" cy="100" r="5.8"/>
+              <circle cx="136" cy="176" r="5.2"/>
+              <circle cx="209" cy="23" r="5.8"/><circle cx="198" cy="106" r="6.1"/>
+              <circle cx="216" cy="178" r="5.4"/>
+            </g>
+          </svg>
+          </span>
+        </a>
+
+        <div id="viewOptions" class="view-options" aria-label="View option">
+          <span class="view-caption">View Option</span>
+          <div class="view-switch" role="group" aria-label="Portfolio view">
+            <button class="view-btn is-selected" type="button" data-view="explore">Explore</button>
+            <span aria-hidden="true">|</span>
+            <button class="view-btn" type="button" data-view="list">List</button>
+          </div>
+        </div>
+      </header>
+
+      <!-- EXPLORE layer -->
+      <div id="exploreLayer" class="explore-layer">
+        <!-- Explore-only camera: zooms constellation and previews together. -->
+        <div id="exploreCamera" class="explore-camera">
+        <!-- Fixed preview area 1: upper center gap -->
+        <div class="preview-slot preview-slot--1" data-preview-zone="1" aria-hidden="true">
+          <img class="preview-layer preview-layer--a" src="" alt="" />
+          <img class="preview-layer preview-layer--b" src="" alt="" />
+        </div>
+
+        <!-- Fixed preview area 2: lower center gap -->
+        <div class="preview-slot preview-slot--2" data-preview-zone="2" aria-hidden="true">
+          <img class="preview-layer preview-layer--a" src="" alt="" />
+          <img class="preview-layer preview-layer--b" src="" alt="" />
+        </div>
+
+        <svg class="map-lines" viewBox="0 0 1440 1024" preserveAspectRatio="none" aria-hidden="true">
+          <!-- S: Profile / Skill / Contact + two decorative anchor stars -->
+          <path d="M500 305 L365 335 L345 500 L505 565 L370 780" />
+          <!-- H: all six projects, intentionally skewed instead of geometric -->
+          <path d="M760 300 L725 520 L790 770" />
+          <path d="M1080 280 L1025 545 L1105 790" />
+          <path d="M725 520 L1025 545" />
+        </svg>
+
+        <!-- S / personal navigation -->
+        <button class="space-node info-node" data-node="profile"
+                style="--x:34.722;--y:29.785;--d:0;" type="button">
+          <span class="node-star node-star--small"></span>
+          <span class="node-label node-label--info">Profile</span>
+        </button>
+
+        <span class="space-node decorative-node" style="--x:25.347;--y:32.715;--d:1;" aria-hidden="true">
+          <span class="node-star node-star--decorative"></span>
+        </span>
+
+        <button class="space-node info-node" data-node="skill"
+                style="--x:23.958;--y:48.828;--d:2;" type="button">
+          <span class="node-star node-star--small"></span>
+          <span class="node-label node-label--info">Skill</span>
+        </button>
+
+        <span class="space-node decorative-node" style="--x:35.069;--y:55.176;--d:3;" aria-hidden="true">
+          <span class="node-star node-star--decorative"></span>
+        </span>
+
+        <button class="space-node info-node" data-node="contact"
+                style="--x:25.694;--y:76.172;--d:4;" type="button">
+          <span class="node-star node-star--small"></span>
+          <span class="node-label node-label--info">Contact</span>
+        </button>
+
+        <!-- H / all six projects -->
+        <button class="space-node project-node" data-project="bugs"
+                style="--x:52.778;--y:29.297;--d:5;" type="button">
+          <span class="node-glow node-glow--xl"></span>
+          <span class="node-star node-star--project"></span>
+          <span class="node-label">Bugs! ReDesign</span>
+        </button>
+
+        <button class="space-node project-node" data-project="naver"
+                style="--x:50.347;--y:50.781;--d:6;" type="button">
+          <span class="node-glow node-glow--xl"></span>
+          <span class="node-star node-star--project"></span>
+          <span class="node-label">NAVER 지식 iN<br>ReDesign</span>
+        </button>
+
+        <button class="space-node project-node" data-project="gta"
+                style="--x:54.861;--y:75.195;--d:7;" type="button">
+          <span class="node-glow node-glow--lg"></span>
+          <span class="node-star node-star--project"></span>
+          <span class="node-label">GTA : Online<br>Promotion site</span>
+        </button>
+
+        <button class="space-node project-node" data-project="aladin"
+                style="--x:75.000;--y:27.344;--d:8;" type="button">
+          <span class="node-glow node-glow--lg"></span>
+          <span class="node-star node-star--project"></span>
+          <span class="node-label">Aladin App<br>ReDesign</span>
+        </button>
+
+        <button class="space-node project-node" data-project="seven"
+                style="--x:71.181;--y:53.223;--d:9;" type="button">
+          <span class="node-glow node-glow--md"></span>
+          <span class="node-star node-star--project"></span>
+          <span class="node-label">7ELEVEN CI<br>ReDesign</span>
+        </button>
+
+        <button class="space-node project-node" data-project="hwalok"
+                style="--x:76.736;--y:77.148;--d:10;" type="button">
+          <span class="node-glow node-glow--lg"></span>
+          <span class="node-star node-star--project"></span>
+          <span class="node-label">충주 활옥동굴<br>Brochure Design</span>
+        </button>
+        </div>
+      </div>
+
+      <!-- LIST layer -->
+      <div id="listLayer" class="list-layer" aria-hidden="true">
+        <!-- V36 / horizontal information links (List mode only). -->
+        <nav class="list-info-nav" aria-label="About Su Han">
+          <button class="list-info-button" data-node="profile" type="button"><span class="list-info-star" aria-hidden="true"></span><span>Profile</span></button>
+          <button class="list-info-button" data-node="skill" type="button"><span class="list-info-star" aria-hidden="true"></span><span>Skill</span></button>
+          <button class="list-info-button" data-node="contact" type="button"><span class="list-info-star" aria-hidden="true"></span><span>Contact</span></button>
+        </nav>
+
+        <div class="project-grid">
+          <button class="project-card" data-project="bugs" style="--i:0" type="button">
+            <span class="card-media"><img src="./assets/bugs.jpg" alt="" /></span>
+            <span class="card-meta">UX/UI Design</span>
+            <span class="card-divider"></span>
+            <span class="card-title">Bugs! ReDesign</span>
+          </button>
+
+          <button class="project-card" data-project="naver" style="--i:1" type="button">
+            <span class="card-media"><img src="./assets/naver.jpg" alt="" /></span>
+            <span class="card-meta">UX/UI Design</span>
+            <span class="card-divider"></span>
+            <span class="card-title">NAVER 지식iN ReDesign</span>
+          </button>
+
+          <button class="project-card" data-project="gta" style="--i:2" type="button">
+            <span class="card-media"><img src="./assets/gta.jpg" alt="" /></span>
+            <span class="card-meta">UX/UI Design</span>
+            <span class="card-divider"></span>
+            <span class="card-title">GTA : Online Promotion site</span>
+          </button>
+
+          <button class="project-card" data-project="hwalok" style="--i:3" type="button">
+            <span class="card-media"><img src="./assets/hwalok.jpg" alt="" /></span>
+            <span class="card-meta">Print &amp; Layout Design</span>
+            <span class="card-divider"></span>
+            <span class="card-title">충주 활옥동굴 Brochure Design</span>
+          </button>
+
+          <button class="project-card" data-project="aladin" style="--i:4" type="button">
+            <span class="card-media"><img src="./assets/aladin.jpg" alt="" /></span>
+            <span class="card-meta">UX/UI Design</span>
+            <span class="card-divider"></span>
+            <span class="card-title">Aladin App ReDesign</span>
+          </button>
+
+          <button class="project-card" data-project="seven" style="--i:5" type="button">
+            <span class="card-media"><img src="./assets/seven.jpg" alt="" /></span>
+            <span class="card-meta">CI Design</span>
+            <span class="card-divider"></span>
+            <span class="card-title">7ELEVEN CI ReDesign</span>
+          </button>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- PROJECT / INFO MODAL --------------------------------------------->
+  <div id="modal" class="modal" aria-hidden="true">
+    <div class="modal-backdrop"></div>
+    <article id="modalPanel" class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle" tabindex="-1">
+      <button id="modalClose" class="modal-close" type="button" aria-label="모달 닫기">×</button>
+
+      <!-- PROFILE modal only: the user's supplied 2026-10-13 reference. -->
+      <section class="profile-panel-content" aria-label="오수한 프로필 소개">
+        <div class="profile-panel-identity">
+          <img class="profile-panel-photo" src="./assets/profile-photo.png" alt="오수한 프로필 사진" width="799" height="801" />
+          <div class="profile-panel-meta">
+            <p class="profile-panel-name">오수한</p>
+            <div class="profile-panel-facts">
+              <p>September 13</p>
+              <p>INTJ - T</p>
+            </div>
+          </div>
+        </div>
+        <div class="profile-panel-story">
+          <h2 id="profileModalTitle" class="profile-panel-heading">나라는 별의 좌표</h2>
+          <p class="profile-panel-lead">흩어진 경험을 하나의 흐름으로 연결하고,<br class="profile-panel-desktop-break" /> 사용자가 길을 잃지 않는 디자인을 그립니다.</p>
+          <p class="profile-panel-description">흩어진 아이디어를 하나의 별자리처럼 연결하고, 익숙한 경험 속 불편함을 발견해 직관적인 사용자 흐름으로 재구성합니다. 섬세한 관찰과 체계적인 정보 설계, 그리고 시각적 완성도를 바탕으로 사용자가 길을 잃지 않는 디자인을 지향합니다.</p>
+        </div>
+      </section>
+
+      <!-- Skill modal only: 2026-10-13 supplied reference. -->
+      <section class="skill-modal-content" aria-label="보유 툴 및 자격증">
+        <h2 class="skill-modal-heading" id="skillModalTitle">Skill &amp; Tools</h2>
+        <div class="skill-modal-columns">
+          <ul class="skill-tools-grid" aria-label="디자인 및 제작 툴">
+            <li class="skill-tool" style="--skill-target:10;" aria-label="Illustrator 숙련도 90%">
+              <div class="skill-tool-orbit">
+                <svg class="skill-ring" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+                  <circle class="skill-ring-track" cx="50" cy="50" r="42" pathLength="100" />
+                  <circle class="skill-ring-progress" cx="50" cy="50" r="42" pathLength="100" />
+                </svg>
+                <img class="skill-tool-icon" src="./assets/illustrator.png" alt="" loading="eager" decoding="async" />
+              </div>
+              <span class="skill-tool-name">Illustrator</span>
+            </li>
+            <li class="skill-tool" style="--skill-target:16;" aria-label="Photoshop 숙련도 84%">
+              <div class="skill-tool-orbit">
+                <svg class="skill-ring" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+                  <circle class="skill-ring-track" cx="50" cy="50" r="42" pathLength="100" />
+                  <circle class="skill-ring-progress" cx="50" cy="50" r="42" pathLength="100" />
+                </svg>
+                <img class="skill-tool-icon" src="./assets/photoshop.png" alt="" loading="eager" decoding="async" />
+              </div>
+              <span class="skill-tool-name">Photoshop</span>
+            </li>
+            <li class="skill-tool" style="--skill-target:12;" aria-label="Figma 숙련도 88%">
+              <div class="skill-tool-orbit">
+                <svg class="skill-ring" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+                  <circle class="skill-ring-track" cx="50" cy="50" r="42" pathLength="100" />
+                  <circle class="skill-ring-progress" cx="50" cy="50" r="42" pathLength="100" />
+                </svg>
+                <img class="skill-tool-icon" src="./assets/figma.png" alt="" loading="eager" decoding="async" />
+              </div>
+              <span class="skill-tool-name">Figma</span>
+            </li>
+            <li class="skill-tool" style="--skill-target:18;" aria-label="PowerPoint 숙련도 82%">
+              <div class="skill-tool-orbit">
+                <svg class="skill-ring" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+                  <circle class="skill-ring-track" cx="50" cy="50" r="42" pathLength="100" />
+                  <circle class="skill-ring-progress" cx="50" cy="50" r="42" pathLength="100" />
+                </svg>
+                <img class="skill-tool-icon" src="./assets/powerpoint.png" alt="" loading="eager" decoding="async" />
+              </div>
+              <span class="skill-tool-name">PowerPoint</span>
+            </li>
+            <li class="skill-tool" style="--skill-target:34;" aria-label="VS Code 숙련도 66%">
+              <div class="skill-tool-orbit">
+                <svg class="skill-ring" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+                  <circle class="skill-ring-track" cx="50" cy="50" r="42" pathLength="100" />
+                  <circle class="skill-ring-progress" cx="50" cy="50" r="42" pathLength="100" />
+                </svg>
+                <img class="skill-tool-icon" src="./assets/vscode.png" alt="" loading="eager" decoding="async" />
+              </div>
+              <span class="skill-tool-name">VS Code</span>
+            </li>
+            <li class="skill-tool" style="--skill-target:38;" aria-label="After Effects 숙련도 62%">
+              <div class="skill-tool-orbit">
+                <svg class="skill-ring" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+                  <circle class="skill-ring-track" cx="50" cy="50" r="42" pathLength="100" />
+                  <circle class="skill-ring-progress" cx="50" cy="50" r="42" pathLength="100" />
+                </svg>
+                <img class="skill-tool-icon" src="./assets/after-effects.png" alt="" loading="eager" decoding="async" />
+              </div>
+              <span class="skill-tool-name">After Effects</span>
+            </li>
+          </ul>
+          <section class="skill-certifications" aria-labelledby="skillCertTitle">
+            <h3 id="skillCertTitle">Certifications</h3>
+            <ul>
+              <li>컴퓨터활용능력 2급</li>
+              <li>문서실무사 3급</li>
+              <li>1종보통 운전면허</li>
+              <li>시각디자인 산업기사 (예정)</li>
+            </ul>
+          </section>
+        </div>
+      </section>
+
+      <!-- CONTACT modal only: supplied 2026-10-13 screenshot and PNG icons. -->
+      <section class="contact-panel-content" aria-labelledby="contactModalTitle">
+        <h2 id="contactModalTitle" class="contact-panel-title">Contact Me!</h2>
+        <address class="contact-panel-details">
+          <a class="contact-panel-row" href="mailto:osh0586@naver.com" aria-label="이메일 보내기: osh0586@naver.com">
+            <img class="contact-panel-icon" src="./assets/mail.png" alt="" width="1024" height="1024" />
+            <span class="contact-panel-value">osh0586@naver.com</span>
+          </a>
+          <a class="contact-panel-row" href="tel:+821044660586" aria-label="전화 걸기: 010-4466-0586">
+            <img class="contact-panel-icon" src="./assets/call.png" alt="" width="300" height="300" />
+            <span class="contact-panel-value">010 - 4466 - 0586</span>
+          </a>
+        </address>
+      </section>
+
+      <!-- Visual first, following the supplied modal reference. -->
+      <figure id="modalMedia" class="modal-media">
+        <img id="modalImageAmbient" class="modal-image-ambient" src="" alt="" aria-hidden="true" />
+        <img id="modalImage" class="modal-image" src="" alt="" />
+      </figure>
+
+      <div class="modal-copy">
+        <div class="modal-overview">
+          <p id="modalEyebrow" class="modal-eyebrow"></p>
+          <h2 id="modalTitle" class="modal-title"></h2>
+          <p id="modalPeriod" class="modal-period"></p>
+          <p id="modalRole" class="modal-role"></p>
+        </div>
+        <div class="modal-description">
+          <p id="modalLead" class="modal-lead"></p>
+          <p id="modalBody" class="modal-body"></p>
+        </div>
+      </div>
+
+      <div class="modal-orbit" aria-hidden="true">
+        <span></span><span></span><span></span>
+      </div>
+    </article>
+  </div>
+
+  <canvas id="meteorTrail" class="meteor-trail" aria-hidden="true"></canvas>
+  <div id="customCursor" class="custom-cursor" aria-hidden="true"></div>
+  <!-- Explore-only, pointer-following interaction guide. Decorative / non-interactive. -->
+  <div id="cursorHint" class="cursor-hint" aria-hidden="true">
+    <span class="cursor-hint__scroll">SCROLL TO EXPLORE</span>
+    <span class="cursor-hint__drag">HOLD &amp; DRAG TO LEAVE A TRAIL</span>
+  </div>
+  <script src="./app.js"></script>
+</body>
+</html>
