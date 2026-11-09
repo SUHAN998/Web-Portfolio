@@ -1,0 +1,11 @@
+/* v1.50.118 — typography scale boundary only, no geometric changes. */
+.orbit-detail-lightbox,
+.orbit-problem-live-viewer,
+.orbit-prototype-overlay,
+body > .fatal,
+body > .debug,
+body > .logo-save {
+  --orbit-type-adjust:var(--orbit-overlay-type-scale,1);
+}
+/* Note: the enlarged animation frame contains a stage-layout clone. It uses
+   the overlay scale by design; captions and side notes stay independent. */

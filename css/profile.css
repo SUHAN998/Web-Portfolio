@@ -1,0 +1,153 @@
+/* PROFILE 01-1 / 01-2. 1440x1024 design stage coordinates; only this area overridden. */
+.profile{position:absolute;inset:0;z-index:2;opacity:0;pointer-events:none;font-family:var(--font-ko);color:#f4f5f7;transition:opacity .7s ease}
+.profile[hidden]{display:none}.profile.is-visible{opacity:1;pointer-events:auto}
+/* The portrait PNG itself defines the crop/outline: never apply a circle mask or background. */
+.profile-left{position:absolute;left:146px;top:351px;width:264px;text-align:center;opacity:0;transform:translateY(44px);transition:transform .9s cubic-bezier(.16,1,.3,1),opacity .9s}
+.profile.is-visible .profile-left{opacity:1;transform:none}
+.profile-portrait{display:block;width:248px;height:auto;margin:0 auto;object-fit:contain;background:transparent;border:0;border-radius:0;overflow:visible}
+.profile-identity{display:grid;grid-template-columns:max-content max-content;grid-template-rows:auto auto;justify-content:center;text-align:left;align-items:baseline;margin:11px auto 0;column-gap:12px;row-gap:0;max-width:100%;white-space:nowrap}
+.profile-identity strong{font-size:calc(24px * var(--orbit-type-adjust,1));font-weight:650;white-space:nowrap}.profile-identity span{font-size:calc(19px * var(--orbit-type-adjust,1));font-weight:430;white-space:nowrap}.profile-identity small{grid-column:2;font-size:calc(15px * var(--orbit-type-adjust,1));color:#dadde5;white-space:nowrap}
+.profile-right{position:absolute;left:550px;top:269px;width:815px;opacity:0;transform:translateY(54px);transition:transform 1s cubic-bezier(.16,1,.3,1) .12s,opacity .8s ease .12s}
+.profile.is-visible .profile-right{opacity:1;transform:none}
+.profile-heading{font-size:calc(49px * var(--orbit-type-adjust,1));line-height:1.31;letter-spacing:-.035em;font-weight:650;margin:0}
+.profile-line{display:block;white-space:nowrap}
+/* Natural content width: bracket and '가' move exactly with the real text, no 280px trailing gap. */
+.profile-animated{display:flex;align-items:baseline;width:max-content;gap:0}
+.profile-bracket,#reason-text{color:#adcfff}
+#reason-text{display:inline-block;width:0;overflow:hidden;white-space:nowrap;vertical-align:bottom;box-sizing:content-box}
+.profile.is-visible #reason-text{animation:reasonOpen .9s cubic-bezier(.22,.68,0,1) .75s forwards}
+@keyframes reasonOpen{to{width:var(--reason-exact-width,5em)}}
+.profile-postfix{margin-left:.09em}
+.profile-lead{font-size:calc(20px * var(--orbit-type-adjust,1));line-height:1.55;letter-spacing:-.015em;margin:38px 0 0;font-weight:400}
+.profile-more{font-size:calc(17px * var(--orbit-type-adjust,1));line-height:1.58;height:0;overflow:hidden;opacity:1;transform:none;margin-top:0;transition:height .65s cubic-bezier(.22,.68,0,1),margin-top .65s cubic-bezier(.22,.68,0,1);will-change:height}
+.profile.is-expanded .profile-more{height:var(--detail-exact-height,116px);margin-top:18px}
+/* Filled chevron left of label, matching the reference rather than a stroked right-hand glyph. */
+.profile-toggle{display:inline-flex;align-items:center;gap:12px;font-size:calc(15px * var(--orbit-type-adjust,1));margin:24px 0 0;padding:8px 0;border:0;background:transparent;color:#f4f5f7;cursor:pointer;pointer-events:auto;opacity:0;transition:opacity .6s .6s}
+.profile.is-visible .profile-toggle{opacity:1}
+.profile-arrow{display:block;width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-top:10px solid #f4f5f7;animation:pointDown 1.7s ease-in-out infinite}
+.profile.is-expanded .profile-arrow{animation:none;transform:rotate(180deg)}
+@keyframes pointDown{0%,100%{translate:0 0}50%{translate:0 4px}}
+/* Each icon and name is precisely centered inside its circular progress ring. */
+.profile-skills{display:grid;grid-template-columns:repeat(6,112px);column-gap:17px;align-items:start;margin-top:45px}
+.profile-skill{width:112px;height:112px;text-align:center}
+.profile-ring{--p:0;position:relative;width:112px;height:112px;border-radius:50%;background:conic-gradient(from 0deg,#92cafd calc(var(--p)*1turn),#2a3341 0)}
+.profile-skill-inner{position:absolute;inset:9px;border-radius:50%;background:#0b101c;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px}
+.profile-skill-inner img{display:block;width:38px;height:38px;object-fit:contain}
+.profile-skill-inner span{display:block;color:#e0e4eb;font-size:calc(12px * var(--orbit-type-adjust,1));line-height:1.16;white-space:nowrap}
+.profile.is-visible .profile-ring{animation:ringProgress 1.8s cubic-bezier(.16,.82,.27,1) 1.5s both}
+@keyframes ringProgress{from{--p:0}to{--p:var(--v)}}
+@property --p{syntax:'<number>';initial-value:0;inherits:false}
+/* The text is fixed in place. Only the clipping container expands/collapses. */
+.profile.is-expanded .profile-skills{margin-top:28px}
+
+/* v1.20: fix hidden-element zero measurements and preserve stationary accordion copy */
+.profile-identity{display:grid;grid-template-columns:auto auto;grid-template-rows:auto auto;justify-content:space-between;align-items:baseline;width:248px;max-width:100%;column-gap:6px;margin-top:11px;white-space:nowrap}
+.profile-identity strong{font-size:calc(32px * var(--orbit-type-adjust,1));letter-spacing:-.04em;line-height:1.23}
+.profile-identity span{font-size:calc(25px * var(--orbit-type-adjust,1));letter-spacing:-.025em;line-height:1.23;text-align:right}
+.profile-identity small{font-size:calc(20px * var(--orbit-type-adjust,1));grid-column:2;text-align:right;line-height:1.35}
+#reason-text{width:0;min-width:0;overflow:hidden;flex:none;white-space:nowrap}
+.reason-inner{display:inline-block;white-space:nowrap;width:max-content}
+.profile.is-visible #reason-text{animation:reasonOpen .9s cubic-bezier(.22,.68,0,1) .75s forwards}
+@keyframes reasonOpen{to{width:var(--reason-exact-width,5.5em)}}
+.profile-more{height:0;min-height:0;margin-top:0;overflow:hidden;opacity:1;transform:none;transition:height .65s cubic-bezier(.22,.68,0,1),margin-top .65s cubic-bezier(.22,.68,0,1)}
+.profile-more-inner{display:block;position:relative;top:0;margin:0;white-space:normal}
+.profile.is-expanded .profile-more{height:var(--detail-exact-height,140px);margin-top:18px}
+
+/* v1.21: match portrait-width identity block with aligned vertical groups */
+.profile-identity{display:flex;align-items:stretch;justify-content:space-between;gap:9px;width:248px;max-width:100%;height:59px;margin:12px auto 0;white-space:nowrap;text-align:left}
+.profile-identity strong{display:flex;align-items:center;flex:0 0 auto;font-size:calc(46px * var(--orbit-type-adjust,1));font-weight:680;line-height:1;letter-spacing:-.045em;white-space:nowrap}
+.profile-identity-right{display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;min-width:0;height:100%;gap:0}
+.profile-identity-right span{display:block;font-size:calc(24px * var(--orbit-type-adjust,1));font-weight:500;line-height:1.08;letter-spacing:-.015em;white-space:nowrap;text-align:left}
+.profile-identity-right small{display:block;font-size:calc(21px * var(--orbit-type-adjust,1));font-weight:450;line-height:1.08;white-space:nowrap;text-align:left;color:#dadde5}
+/* Measure the phrase for animation, but never leave the completed phrase clipped. */
+#reason-text.reason-complete{width:max-content!important;overflow:visible!important;animation:none!important}
+.reason-inner{display:inline-block;width:max-content;white-space:nowrap}
+
+/* v1.22: fixed detail controls + exact guide proportions. Keep content reveal independent of layout flow. */
+.profile-right{height:670px}
+.profile-more{position:absolute;left:0;top:345px;width:100%;margin:0!important;z-index:1}
+.profile.is-expanded .profile-more{margin:0!important}
+.profile-toggle{position:absolute;left:0;top:475px;margin:0!important;z-index:3}
+.profile-skills,.profile.is-expanded .profile-skills{position:absolute;left:0;top:543px;margin:0!important;display:grid;grid-template-columns:repeat(6,104px);column-gap:18px}
+.profile-skill,.profile-ring{width:104px;height:104px}
+.profile-skill-inner{inset:8px;gap:5px}
+.profile-skill-inner img{width:35px;height:35px}
+.profile-skill-inner span{font-size:calc(11px * var(--orbit-type-adjust,1))}
+.profile-lead{font-size:calc(23px * var(--orbit-type-adjust,1));line-height:1.48;letter-spacing:-.02em}
+/* Identity: fill the photo width, right group keeps same block height. */
+.profile-identity{width:248px;height:66px;gap:5px;justify-content:space-between;align-items:stretch}
+.profile-identity strong{font-size:calc(50px * var(--orbit-type-adjust,1));line-height:1;letter-spacing:-.045em}
+.profile-identity-right{height:100%;justify-content:space-between;align-items:flex-start}
+.profile-identity-right span{font-size:calc(25px * var(--orbit-type-adjust,1));line-height:1;letter-spacing:-.02em}
+.profile-identity-right small{font-size:calc(22px * var(--orbit-type-adjust,1));line-height:1}
+
+/* v1.23 — selective regression fix: the DETAIL copy is stationary inside a moving-height mask.
+   Controls remain in normal flow: the expanded mask PUSHES them down instead of reserving space. */
+.profile-right{height:auto}
+.profile-more,.profile.is-expanded .profile-more{
+  position:relative;left:auto;top:auto;width:100%;
+  height:0;min-height:0;margin:0!important;overflow:hidden;z-index:auto;
+  transition:height .65s cubic-bezier(.22,.68,0,1);
+}
+.profile.is-expanded .profile-more{height:calc(var(--detail-exact-height, 140px) + 18px)}
+.profile-more-inner{
+  position:absolute;left:0;top:18px;width:100%;margin:0;
+  transform:none!important;white-space:normal;
+}
+.profile-toggle{
+  position:relative;left:auto;top:auto;margin:24px 0 0!important;z-index:auto;
+}
+.profile-skills,.profile.is-expanded .profile-skills{
+  position:relative;left:auto;top:auto;margin:38px 0 0!important;
+  display:grid;grid-template-columns:repeat(6,104px);column-gap:18px;
+}
+/* Identity portrait and names are scaled together, with the two text columns fitted to its width. */
+.profile-left{left:122px;width:312px}
+.profile-portrait{width:292px;height:auto}
+.profile-identity{
+  width:292px;max-width:100%;height:76px;gap:5px;
+  margin:12px auto 0;justify-content:space-between;align-items:stretch;white-space:nowrap;
+}
+.profile-identity strong{
+  font-size:calc(59px * var(--orbit-type-adjust,1));font-weight:680;line-height:1;letter-spacing:-.045em;
+  display:flex;align-items:center;flex:0 0 auto;white-space:nowrap;
+}
+.profile-identity-right{
+  height:100%;min-width:0;display:flex;flex-direction:column;
+  align-items:flex-start;justify-content:space-between;gap:0;
+}
+.profile-identity-right span{
+  font-size:calc(27px * var(--orbit-type-adjust,1));font-weight:500;line-height:1.12;letter-spacing:-.02em;
+  white-space:nowrap;text-align:left;
+}
+.profile-identity-right small{
+  font-size:calc(23.4px * var(--orbit-type-adjust,1));font-weight:450;line-height:1.12;
+  white-space:nowrap;text-align:left;
+}
+
+/* v1.24 — align the portrait's upper edge with the title's marked red guide.
+   Keep the DETAIL layout and all of its flow behavior unchanged. */
+.profile-left{top:287px}
+/* Korean name retains its fitted size; the English/MBTI stack is reduced to 80%
+   of the previous fitted values, leaving breathing room between columns. */
+.profile-identity{gap:14px}
+
+/* v1.48.3 — one intrinsic unscaled width throughout the accordion animation.
+   Finishing the animation never switches to max-content (which caused the ]가 jump). */
+#reason-text.reason-complete{width:var(--reason-exact-width)!important;overflow:visible!important;animation:none!important}
+.profile.is-visible .profile-ring{animation:none}
+.profile.is-visible.is-reason-done .profile-ring{
+  animation:ringProgress .9s cubic-bezier(.16,.82,.27,1) 0s both;
+}
+
+/* v1.50.29 — only the expandable DETAIL body is 90% of the original
+   17px.  The 23px subtitle, headline, identity and skill labels are untouched.
+   The top-logo PROFILE dialog clones this markup, so it inherits the same rule. */
+.profile .profile-more{font-size:calc(15.3px * var(--orbit-type-adjust,1))} /* 17px × .90 */
+
+/* v1.50.30: right-hand English name and MBTI = 90% of v1.50.29.
+   Keep the portrait and Korean name exactly as they were.
+   Match the marked-up identity baseline: align English near the Korean
+   name's upper edge and MBTI near its lower edge, without changing portrait
+   width, measured name sizes, or the fixed overall identity block height. */
+.profile-identity-right{box-sizing:border-box;padding-top:9px;padding-bottom:7px}

@@ -1,0 +1,1075 @@
+/* CLEAR ORBIT v1.50.7 — stable responsive reading sizes.
+ * The approved 1440 × 1024 stage/panel geometry stays unchanged.
+ * A continuous viewport-height adjustment replaces the four jumping breakpoints.
+ * Constrain typography inside its REAL layout column; never grow nowrap text
+ * across the metadata column or fixed section boundaries.
+ */
+:root{
+  --orbit-read-extra:clamp(0px,calc(9.6px - 1vh),2.35px);
+  --orbit-read-small:clamp(0px,calc(6.72px - .7vh),1.45px);
+}
+@media(max-height:960px){
+  /* OVERVIEW: compensate only as far as the two source-PDF columns permit. */
+  .orbit-detail-overview-grid{
+    /* At 960px high this is exactly the PDF's 290px / 20px grid.
+       It glides toward 315px / 14px as the laptop viewport gets shorter. */
+    grid-template-columns:minmax(0,clamp(290px,calc(414.8px - 13vh),315px)) minmax(0,278px);
+    gap:clamp(14px,calc(3.125vh - 10px),20px);
+    align-items:start;
+  }
+  .orbit-detail-overview-grid>div{min-width:0;max-width:100%;}
+  .orbit-detail-summary{
+    font-size:calc(calc(16px + min(var(--orbit-read-extra),1.55px)) * var(--orbit-type-adjust,1));
+    line-height:1.39;
+    max-width:100%;
+    overflow-wrap:anywhere;
+  }
+  .orbit-detail-description{
+    font-size:calc(calc(12px + min(var(--orbit-read-small),1.1px)) * var(--orbit-type-adjust,1));
+    line-height:1.4;
+    max-width:100%;
+    overflow-wrap:anywhere;
+  }
+  /* These spans previously had white-space:nowrap and could cross OVERVIEW's
+     2-column boundary when font compensation was activated. */
+  .orbit-detail-summary .orbit-detail-copy-line,
+  .orbit-detail-description .orbit-detail-copy-line{
+    white-space:normal;
+    overflow-wrap:anywhere;
+  }
+  .orbit-detail-tags{min-width:0;max-width:100%;row-gap:5px;column-gap:4px;}
+  .orbit-detail-tags span{
+    box-sizing:border-box;
+    font-size:calc(calc(9.6px + min(var(--orbit-read-small),1.2px)) * var(--orbit-type-adjust,1));
+    line-height:1.35;
+    max-width:100%;
+  }
+  .orbit-detail-period{
+    width:100%;left:0;
+    flex-wrap:wrap;
+    justify-content:flex-start;
+    column-gap:9px;row-gap:4px;
+    margin:11px 0 12px;
+  }
+  .orbit-detail-period span{
+    font-size:calc(calc(12px + min(var(--orbit-read-small),1.2px)) * var(--orbit-type-adjust,1));
+    white-space:normal;
+    overflow-wrap:anywhere;
+  }
+  /* The swatch grid retains its five colors inside the narrower right column. */
+  .orbit-detail-colors{max-width:100%;min-width:0;gap:8px;}
+  .orbit-detail-colors>span{min-width:0;}
+  .orbit-detail-colors small{font-size:calc(8px * var(--orbit-type-adjust,1));max-width:100%;}
+  /* Fixed-key-insight and narrow solution columns cannot accommodate 20px copy. */
+  .orbit-detail-issues article p{
+    font-size:calc(calc(15px + min(var(--orbit-read-small),1.2px)) * var(--orbit-type-adjust,1));
+    line-height:1.33;
+    overflow-wrap:anywhere;
+  }
+  .orbit-detail-key-insight p{
+    font-size:calc(calc(16px + min(var(--orbit-read-extra),1.45px)) * var(--orbit-type-adjust,1));
+    line-height:1.35;
+    overflow-wrap:anywhere;
+  }
+  .orbit-detail-row-caption p{font-size:calc(calc(12px + min(var(--orbit-read-small),1.2px)) * var(--orbit-type-adjust,1));line-height:1.4;}
+  .orbit-detail-direction>p{font-size:calc(calc(16px + min(var(--orbit-read-small),1.15px)) * var(--orbit-type-adjust,1));line-height:1.55;}
+  .orbit-detail-solution-points li,
+  .orbit-detail-solution-points article p{
+    font-size:calc(calc(15px + min(var(--orbit-read-small),1.2px)) * var(--orbit-type-adjust,1));
+    line-height:1.3;
+    overflow-wrap:anywhere;
+  }
+  .orbit-detail-solution-points article>div{min-width:0;}
+  .orbit-detail-thumb-caption{font-size:calc(calc(15px + min(var(--orbit-read-small),1.1px)) * var(--orbit-type-adjust,1));}
+  .orbit-detail-nav button{font-size:calc(calc(16px + min(var(--orbit-read-small),1.3px)) * var(--orbit-type-adjust,1));}
+  .orbit-detail-nav button.is-active{font-size:calc(calc(20px + min(var(--orbit-read-small),1.1px)) * var(--orbit-type-adjust,1));}
+  .orbit-detail-close{font-size:calc(calc(12px + min(var(--orbit-read-small),1px)) * var(--orbit-type-adjust,1));}
+  /* HUD and PROFILE: change just the reading text, not control hit areas. */
+  .orbit-wheel-help{font-size:calc(calc(13.3px + min(var(--orbit-read-small),1.2px)) * var(--orbit-type-adjust,1));}
+  .orbit-reset{font-size:calc(calc(12px + min(var(--orbit-read-small),1.1px)) * var(--orbit-type-adjust,1));}
+  .profile-more{font-size:calc(calc(17px + min(var(--orbit-read-small),1.3px)) * var(--orbit-type-adjust,1));}
+  .profile-toggle{font-size:calc(calc(15px + min(var(--orbit-read-small),1.2px)) * var(--orbit-type-adjust,1));}
+  .profile-skill-inner span{font-size:calc(calc(11px + min(var(--orbit-read-small),1.15px)) * var(--orbit-type-adjust,1));}
+  .orbit-explore-heading{font-size:calc(calc(15px + min(var(--orbit-read-small),1.2px)) * var(--orbit-type-adjust,1));}
+  .orbit-view-tooltip{font-size:calc(calc(13px + min(var(--orbit-read-small),1.15px)) * var(--orbit-type-adjust,1));}
+  .orbit-satellite-channel small{font-size:calc(calc(12px + min(var(--orbit-read-small),1.1px)) * var(--orbit-type-adjust,1));}
+  /* BUGS-only fixed-height issue + insight spacing remains original v1.50.5. */
+  .orbit-project-detail[data-project="bugs"] .orbit-detail-section[data-section="problem"] .orbit-detail-issues{gap:8px;}
+  .orbit-project-detail[data-project="bugs"] .orbit-detail-section[data-section="problem"] .orbit-detail-issues article h4{margin-bottom:5px;}
+  /* CAVE's narrow brochure columns: retain 3-column layout without overflow. */
+  .orbit-project-detail[data-project="hwalok"] .orbit-detail-solution-points ul{gap:2px;}
+  .orbit-project-detail[data-project="hwalok"] .orbit-detail-solution-points h4{margin-bottom:7px;}
+  .orbit-project-detail[data-project="hwalok"] .orbit-detail-solution-points li,
+  .orbit-project-detail[data-project="hwalok"] .orbit-detail-solution-points article p{
+    font-size:calc(calc(15px + min(var(--orbit-read-small),1px)) * var(--orbit-type-adjust,1));
+    line-height:1.18;
+  }
+}
+
+/* v1.50.10 — PROBLEM content hierarchy only (all six projects).
+   Keep the existing 5-step scroll, chapter offsets, original media slots,
+   BUGS animation and all other section typography unchanged. */
+.orbit-detail-section[data-section="problem"] h3{
+  white-space:nowrap;
+  word-break:keep-all;
+}
+/* Fill the media column's existing height: ISSUE 03 ends exactly at the
+   bottom image/phone baseline; extra height becomes spacing BETWEEN issues. */
+.orbit-detail-section[data-section="problem"] .orbit-detail-split .orbit-detail-issues{
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  align-self:stretch;
+  row-gap:0;
+}
+/* Older BUGS-specific gap has higher specificity; override only this slot. */
+.orbit-project-detail[data-project="bugs"] .orbit-detail-section[data-section="problem"] .orbit-detail-issues{
+  row-gap:0;
+}
+.orbit-detail-section[data-section="problem"] .orbit-detail-issues article strong{
+  color:#91caff;
+  font-weight:570;
+}
+.orbit-project-detail[data-layout="visual"] .orbit-detail-section[data-section="problem"] .orbit-detail-issues article strong{
+  color:#ff8c91;
+}
+.orbit-detail-section[data-section="problem"] .orbit-detail-issues article p{
+  color:#a9b1c1;
+}
+
+
+/* v1.50.87 — PROBLEM / PLANNING semantic typography and motion rhythm.
+ * All six projects share the same roles; do not flatten their branded colors,
+ * change storyboards, or apply these values to OVERVIEW / INSIGHT / SOLUTION.
+ * BUGS/ALADIN compact insights and the approved CAVE three-column text are
+ * intentionally narrower exceptions. 7ELEVEN stays a static analysis.
+ */
+.orbit-project-detail .orbit-detail-section[data-section="problem"] {
+  --orbit-problem-index: 16px;
+  --orbit-problem-title: 20px;
+  --orbit-problem-copy: 15px;
+  --orbit-problem-insight-title: 20px;
+  --orbit-problem-insight-copy: 15px;
+  --orbit-problem-emphasis-fade: .4s;
+  --orbit-problem-enter: .85s;
+  --orbit-problem-enter-ease: cubic-bezier(.25,.83,.27,1);
+}
+/* 01 / 02 / 03 (and the existing GTA TARGET / BENEFIT / GOAL labels). */
+.orbit-project-detail .orbit-detail-section[data-section="problem"] .orbit-detail-issues article>strong {
+  font-size:calc(var(--orbit-problem-index) * var(--orbit-type-adjust,1));
+  line-height:1.3;
+  font-weight:600;
+}
+/* Heading and body define two distinct reading levels across five projects.
+ * Existing article margins / special spatial positioning are left intact. */
+.orbit-project-detail .orbit-detail-section[data-section="problem"] .orbit-detail-issues article>h4 {
+  font-size:calc(var(--orbit-problem-title) * var(--orbit-type-adjust,1));
+  font-weight:650;
+  line-height:1.35;
+  letter-spacing:-.035em;
+}
+.orbit-project-detail .orbit-detail-section[data-section="problem"] .orbit-detail-issues article>p {
+  font-size:calc(var(--orbit-problem-copy) * var(--orbit-type-adjust,1));
+  font-weight:400;
+  line-height:1.45;
+  word-break:keep-all;
+  overflow-wrap:break-word;
+}
+.orbit-project-detail .orbit-detail-section[data-section="problem"] .orbit-detail-key-insight>strong {
+  font-size:calc(var(--orbit-problem-insight-title) * var(--orbit-type-adjust,1));
+  font-weight:650;
+  line-height:1.35;
+}
+.orbit-project-detail .orbit-detail-section[data-section="problem"] .orbit-detail-key-insight>p {
+  font-size:calc(var(--orbit-problem-insight-copy) * var(--orbit-type-adjust,1));
+  line-height:1.5;
+  font-weight:420;
+}
+/* Compact right-hand insight lines must not overlap the animated device.
+ * The 14px approved exception is retained for BUGS and ALADIN. */
+.orbit-project-detail:is([data-project="bugs"],[data-project="aladin"])
+  .orbit-detail-section[data-section="problem"] .orbit-detail-key-insight>p {
+  font-size:calc(14px * var(--orbit-type-adjust,1));
+  line-height:20px;
+}
+.orbit-project-detail[data-project="bugs"]
+  .orbit-detail-section[data-section="problem"] .orbit-detail-issues article>p {
+  line-height:1.32; /* preserve BUGS' verified issue/insight separation */
+}
+/* CAVE uses unboxed, non-reactive 3-column text with its Figma-specific sizes.
+ * The only normalized role here is its 20px KEY INSIGHT headline; no badges,
+ * focus colors, animation-linked text, background, or stroke are reintroduced. */
+.orbit-project-detail[data-project="hwalok"]
+  .orbit-detail-section[data-section="problem"] .orbit-cave-problem-copy .orbit-cave-problem-key>strong {
+  font-size:calc(var(--orbit-problem-insight-title) * var(--orbit-type-adjust,1));
+  font-weight:650;
+  line-height:1.35;
+}
+/* Shared micro-Fade cadence (~0.4s). Scene holds, story order and full-loop
+ * durations are preserved: BUGS 13.6s, NAVER 16s, ALADIN 12.75s,
+ * CAVE ~16.92s, GTA 15s. NAVER/GTA use existing keyframe scene fades.
+ * CAVE's approved directional slide, posters and Where?? sequence stay intact. */
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-problem-zone,
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-problem-control,
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-problem-playlist-mark,
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-problem-player .issue-num,
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-problem-player .issue-bg,
+.orbit-project-detail[data-project="aladin"] .orbit-detail-section[data-section="problem"] .orbit-aladin-film-marked,
+.orbit-project-detail[data-project="hwalok"] .orbit-cave-film-caption span {
+  transition-duration:var(--orbit-problem-emphasis-fade);
+}
+/* Consistent upward entrance of the two app stories, while leaving their
+ * original slide direction, stage clocks and image transforms untouched. */
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-problem-playlist,
+.orbit-project-detail[data-project="aladin"] .orbit-aladin-film-scene {
+  transition-duration:var(--orbit-problem-enter);
+  transition-timing-function:var(--orbit-problem-enter-ease);
+}
+/* Phone film captions: use a fade rather than an instantaneous display
+ * swap. The source text and each stage's caption selection are unchanged. */
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-film-caption span,
+.orbit-project-detail[data-project="aladin"] .orbit-aladin-film-caption span {
+  display:block;
+  position:absolute;
+  left:8px;
+  right:8px;
+  top:50%;
+  transform:translateY(-50%);
+  opacity:0;
+  transition:opacity var(--orbit-problem-emphasis-fade) ease;
+  pointer-events:none;
+}
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-problem-animated[data-bugs-stage="zone"] .orbit-bugs-film-caption .cap-1,
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-problem-animated:is([data-bugs-stage="playlist-in"],[data-bugs-stage="zoom"],[data-bugs-stage="unzoom"],[data-bugs-stage="playlist-out"]) .orbit-bugs-film-caption .cap-2,
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-problem-animated[data-bugs-stage="controls"] .orbit-bugs-film-caption .cap-3,
+.orbit-project-detail[data-project="aladin"] .orbit-aladin-problem-film:is([data-aladin-stage="base1"],[data-aladin-stage="focus1"]) .orbit-aladin-film-caption .cap-1,
+.orbit-project-detail[data-project="aladin"] .orbit-aladin-problem-film:is([data-aladin-stage="base2"],[data-aladin-stage="focus2"]) .orbit-aladin-film-caption .cap-2,
+.orbit-project-detail[data-project="aladin"] .orbit-aladin-problem-film:is([data-aladin-stage="base3"],[data-aladin-stage="focus3"]) .orbit-aladin-film-caption .cap-3 {
+  opacity:1;
+}
+/* Preserve existing continuous-height reading-size compensation in compact
+ * viewports. This block follows it because these scoped styles come later. */
+@media(max-height:960px){
+  .orbit-project-detail .orbit-detail-section[data-section="problem"] .orbit-detail-issues article>p {
+    font-size:calc(calc(var(--orbit-problem-copy) + min(var(--orbit-read-small),1.2px)) * var(--orbit-type-adjust,1));
+    line-height:1.33;
+  }
+  .orbit-project-detail[data-project="bugs"] .orbit-detail-section[data-section="problem"] .orbit-detail-issues article>p {
+    line-height:1.32;
+  }
+  .orbit-project-detail .orbit-detail-section[data-section="problem"] .orbit-detail-key-insight>p {
+    font-size:calc(calc(var(--orbit-problem-insight-copy) + min(var(--orbit-read-extra),1.45px)) * var(--orbit-type-adjust,1));
+    line-height:1.35;
+  }
+  .orbit-project-detail:is([data-project="bugs"],[data-project="aladin"])
+    .orbit-detail-section[data-section="problem"] .orbit-detail-key-insight>p {
+    font-size:calc(14px * var(--orbit-type-adjust,1));
+    line-height:20px;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .orbit-project-detail[data-project="bugs"] .orbit-bugs-problem-zone,
+  .orbit-project-detail[data-project="bugs"] .orbit-bugs-problem-control,
+  .orbit-project-detail[data-project="bugs"] .orbit-bugs-problem-playlist-mark,
+  .orbit-project-detail[data-project="bugs"] .orbit-bugs-problem-player .issue-num,
+  .orbit-project-detail[data-project="bugs"] .orbit-bugs-problem-player .issue-bg,
+  .orbit-project-detail[data-project="bugs"] .orbit-bugs-problem-playlist,
+  .orbit-project-detail[data-project="aladin"] .orbit-aladin-film-marked,
+  .orbit-project-detail[data-project="aladin"] .orbit-aladin-film-scene,
+  .orbit-project-detail[data-project="hwalok"] .orbit-cave-film-caption span,
+  .orbit-project-detail[data-project="bugs"] .orbit-bugs-film-caption span,
+  .orbit-project-detail[data-project="aladin"] .orbit-aladin-film-caption span {
+    transition-duration:.01ms!important;
+  }
+}
+
+
+/* v1.50.88 — selective shared DETAIL refinements. Keep unique project media and motion. */
+.orbit-project-detail .orbit-detail-kicker{color:#739DF8;font-weight:300;letter-spacing:.025em}
+/* v1.50.89 — OVERVIEW: keep the user's color-marked reading order:
+   full-width title; left subheading/body; right tags -> project/period -> palette.
+   The four existing tags are forced onto exactly one row (no overflow).
+   Caption text, media and the 5-section structure are not repositioned. */
+.orbit-project-detail .orbit-detail-overview-grid{align-items:start;}
+.orbit-project-detail .orbit-detail-overview-grid>div:last-child{min-width:0;max-width:100%;}
+.orbit-project-detail .orbit-detail-overview-grid>div:last-child .orbit-detail-tags{
+ display:flex;flex-flow:row nowrap;justify-content:space-between;align-items:center;
+ gap:3px;width:100%;max-width:100%;min-width:0;margin:0;
+}
+.orbit-project-detail .orbit-detail-overview-grid .orbit-detail-tags>span{
+ display:inline-block;flex:0 1 auto;min-width:0;max-width:100%;
+ font-size:calc(9px * var(--orbit-type-adjust,1));line-height:1.34;padding:2px 4px;
+ white-space:nowrap;letter-spacing:-.045em;box-sizing:border-box;
+}
+.orbit-project-detail .orbit-detail-period{
+ display:flex;flex-wrap:nowrap;justify-content:space-between;align-items:baseline;
+ gap:8px;margin:13px 0 12px;width:100%;min-width:0;left:0;
+}
+.orbit-project-detail .orbit-detail-period>strong{margin:0;flex:0 0 auto;text-align:left;white-space:nowrap}
+.orbit-project-detail .orbit-detail-period>span{margin:0 0 0 auto;flex:0 1 auto;text-align:right;white-space:nowrap}
+.orbit-project-detail .orbit-detail-colors{width:100%;min-width:0;max-width:100%;justify-content:space-between;}
+.orbit-project-detail .orbit-detail-colors>span{min-width:0;}
+/* PROBLEM: remove the temporary v1.50.88 card entirely, retaining stronger
+   heading/body contrast as editorial typography, also for CAVE. */
+.orbit-project-detail .orbit-detail-section[data-section="problem"] .orbit-detail-key-insight,
+.orbit-project-detail[data-project="hwalok"] .orbit-cave-problem-copy .orbit-cave-problem-key{
+ border:0;border-radius:0;outline:none;padding:0;box-shadow:none;background:transparent;
+ box-sizing:border-box;
+}
+.orbit-project-detail .orbit-detail-section[data-section="problem"] .orbit-detail-key-insight>strong,
+.orbit-project-detail[data-project="hwalok"] .orbit-cave-problem-copy .orbit-cave-problem-key>strong{
+ display:block;font-size:calc(22px * var(--orbit-type-adjust,1));font-weight:730;line-height:1.3;color:#f8fbff;
+ letter-spacing:-.025em;margin:0 0 9px;
+}
+.orbit-project-detail .orbit-detail-section[data-section="problem"] .orbit-detail-key-insight>p,
+.orbit-project-detail[data-project="hwalok"] .orbit-cave-problem-copy .orbit-cave-problem-key>p{
+ font-size:calc(15px * var(--orbit-type-adjust,1));font-weight:470;line-height:1.5;color:#e2ebff;margin:0;
+ white-space:normal;word-break:keep-all;overflow-wrap:break-word;
+}
+/* RESULT: image zooms 10%; the card doesn't lift. Preserve the caption overlay and lightbox click. */
+.orbit-project-detail .orbit-detail-media--final .orbit-detail-image-button{
+ transform:none!important;filter:none!important;overflow:hidden;box-shadow:none;
+ transition:box-shadow .35s ease!important;
+}
+.orbit-project-detail .orbit-detail-media--final .orbit-detail-image-button img{
+ transform:scale(1);transform-origin:center center;transition:transform .5s cubic-bezier(.2,.7,.2,1);
+}
+.orbit-project-detail .orbit-detail-media--final .orbit-detail-image-button:is(:hover,:focus-visible){
+ transform:none!important;filter:none!important;
+ box-shadow:inset 0 0 0 1px rgba(225,239,255,.8),0 0 0 1px rgba(175,209,255,.7),0 0 20px rgba(113,166,255,.53)!important;
+}
+.orbit-project-detail .orbit-detail-media--final .orbit-detail-image-button:is(:hover,:focus-visible) img{transform:scale(1.1)}
+/* NAVER's previously static 112px benchmarks now use the existing interactive lightbox. */
+.orbit-project-detail .orbit-naver-insight-reference-card figure .orbit-detail-image-button{width:100%;height:auto;box-shadow:none;transform:none}
+.orbit-project-detail .orbit-naver-insight-reference-card figure .orbit-detail-image-button img{width:100%;height:auto;aspect-ratio:112 / 63;object-fit:contain}
+.orbit-project-detail .orbit-naver-insight-reference-card figure .orbit-detail-image-button:is(:hover,:focus-visible){outline:1px solid #a6cbfa;outline-offset:2px;filter:none}
+/* v1.50.89 — center-anchored gentle 1.05x logo hover.
+   Glow strength is 60% of the v1.50.88 hover setting. */
+.orbit-personal-logo{
+ transform-origin:50% 50%;
+ transform:translate(-49.24%,-53.8%) scale(1);
+ transition:opacity .34s ease,filter .85s ease,transform .92s cubic-bezier(.22,1,.36,1)!important;
+}
+.orbit-personal-logo.is-hovered{
+ transform:translate(-49.24%,-53.8%) scale(1.05);
+ filter:drop-shadow(0 0 10.2px rgba(243,249,255,.432)) drop-shadow(0 0 24px rgba(196,222,255,.264))!important;
+}
+/* Phone links: enlarge only the number, both shortcut and end-of-journey layouts. */
+.orbit-shortcut-contact-field:last-child a{font-size:calc(28.8px * var(--orbit-type-adjust,1))}
+.orbit-contact-direct.is-story .orbit-contact-direct-info>div:last-child a{font-size:calc(40.8px * var(--orbit-type-adjust,1))}
+@media(prefers-reduced-motion:reduce){
+ .orbit-detail-media--final .orbit-detail-image-button img,.orbit-personal-logo{transition-duration:.01ms!important}
+}
+
+/* v1.50.89 — cancel the unvisited-only flashing halo completely.
+   The original static planet shape and subtle atmosphere remain unaffected. */
+.orbit-explore .orbit-planet.is-unvisited::before{content:none!important;display:none!important;animation:none!important;}
+.orbit-explore .orbit-planet:not(.is-frontmost){pointer-events:none!important}
+/* Remove all v1.50.88 timers, including any cached dynamic element. */
+.orbit-problem-timer,.orbit-gta-planning-progress{display:none!important}
+/* v1.50.88 — softly blurred background; CONTACT and top-logo remain sharp. */
+.orbit-contact-focus-backdrop{position:absolute;inset:0;z-index:4;pointer-events:none;opacity:0;
+ background:rgba(7,12,27,.20);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+ transition:opacity .55s ease}
+.orbit-contact-focus-backdrop.is-visible{opacity:1}
+.orbit-contact-focus-backdrop.is-story{mask-image:radial-gradient(ellipse 275px 245px at var(--focus-satellite-x,985px) var(--focus-satellite-y,470px),transparent 0%,transparent 69%,#000 100%);
+ -webkit-mask-image:radial-gradient(ellipse 275px 245px at var(--focus-satellite-x,985px) var(--focus-satellite-y,470px),transparent 0%,transparent 69%,#000 100%)}
+/* Remove the satellite's periodic backlight; preserve its idle float and camera easing. */
+.orbit-satellite-ui .orbit-satellite-aura,
+.orbit-satellite-ui.is-waiting .orbit-satellite-aura,
+.orbit-satellite-ui.is-shifting .orbit-satellite-aura{
+ display:none!important;opacity:0!important;animation:none!important;
+}
+@media(prefers-reduced-motion:reduce){.orbit-contact-focus-backdrop{transition-duration:.01ms}}
+
+/* Readability: smaller laptop viewports get larger body copy, without scaling
+   the approved modal width. Very tall displays retain the reference sizes. */
+:root{--orbit-laptop-copy-boost:clamp(0px,calc((1180px - 100vh)*.014),4px)}
+@media(max-height:1180px){
+ .orbit-project-detail .orbit-detail-description{
+   font-size:calc(calc(12px + var(--orbit-laptop-copy-boost)) * var(--orbit-type-adjust,1));line-height:1.48;
+   overflow-wrap:anywhere;
+ }
+ .orbit-project-detail .orbit-detail-summary{
+   font-size:calc(calc(16px + min(var(--orbit-laptop-copy-boost),2px)) * var(--orbit-type-adjust,1));line-height:1.40;
+ }
+ .orbit-project-detail .orbit-detail-issues article p,
+ .orbit-project-detail .orbit-detail-solution-points li,
+ .orbit-project-detail .orbit-detail-solution-points article p,
+ .orbit-project-detail .orbit-detail-row-caption p{
+   font-size:calc(calc(12px + var(--orbit-laptop-copy-boost)) * var(--orbit-type-adjust,1));line-height:1.42;
+   overflow-wrap:anywhere;
+ }
+ .orbit-project-detail .orbit-detail-direction>p,
+ .orbit-project-detail .orbit-detail-section[data-section="insight"] p,
+ .orbit-project-detail .orbit-detail-section[data-section="result"] p{
+   font-size:calc(calc(14px + min(var(--orbit-laptop-copy-boost),3px)) * var(--orbit-type-adjust,1));line-height:1.48;
+ }
+ .orbit-project-detail .orbit-detail-section[data-section="problem"] .orbit-detail-key-insight>p,
+ .orbit-project-detail[data-project="hwalok"] .orbit-cave-problem-copy .orbit-cave-problem-key>p{
+   font-size:calc(calc(15px + min(var(--orbit-laptop-copy-boost),2px)) * var(--orbit-type-adjust,1));line-height:1.5;
+ }
+}
+/* CAVE KEY INSIGHT is no longer a card; restore natural section spacing. */
+
+/* v1.50.91 — match the effective OVERVIEW body copy size in every modal.
+   Replaces the v1.50.90 120% enlargement; preserve titles, numbering and interactions.
+   The shared variable is already declared for smaller-height laptop screens. */
+.profile .profile-more,
+.orbit-project-detail .orbit-detail-section[data-section="solution"] .orbit-detail-solution-points li,
+.orbit-project-detail .orbit-detail-section[data-section="solution"] .orbit-detail-solution-points article p {
+  font-size:calc(12px * var(--orbit-type-adjust,1));
+  line-height:1.48;
+  overflow-wrap:break-word;
+  word-break:keep-all;
+}
+@media (max-height:1180px) {
+  .profile .profile-more,
+  .orbit-project-detail .orbit-detail-section[data-section="solution"] .orbit-detail-solution-points li,
+  .orbit-project-detail .orbit-detail-section[data-section="solution"] .orbit-detail-solution-points article p {
+    font-size:calc(calc(12px + var(--orbit-laptop-copy-boost)) * var(--orbit-type-adjust,1));
+    line-height:1.48;
+  }
+}
+
+/* v1.50.92 — INSIGHT typography harmonization, all six projects.
+   Match the 01/02 research image numbers to SOLUTION's 20px numbering. */
+.orbit-project-detail .orbit-detail-section[data-section="insight"] .orbit-detail-row-caption>b {
+  font-size:calc(20px * var(--orbit-type-adjust,1));
+  font-weight:350;
+  line-height:1.25;
+  min-width:23px;
+}
+/* BUGS-only evidence editorial adjustment from marked screenshot.
+   Larger labels increase the two fact rows' natural height; preserve the existing
+   38px image margin so the IDC capture moves down with the text, not over it. */
+.orbit-project-detail[data-project="bugs"] .orbit-detail-section[data-section="insight"] .orbit-bugs-benchmark-facts span {
+  font-size:calc(12px * var(--orbit-type-adjust,1));
+  line-height:1.42;
+}
+.orbit-project-detail[data-project="bugs"] .orbit-detail-section[data-section="insight"] .orbit-bugs-benchmark-takeaway {
+  margin-top:19px;
+  align-items:baseline;
+}
+.orbit-project-detail[data-project="bugs"] .orbit-detail-section[data-section="insight"] .orbit-bugs-benchmark-takeaway b {
+  font-size:calc(13px * var(--orbit-type-adjust,1));
+  line-height:1.35;
+}
+
+/* v1.50.93 — INSIGHT caption refinement; retained shared markup and existing copy.
+   BUGS-specific SAFETY FIRST: enlarge its heading and give adjacent copy enough space. */
+.orbit-project-detail[data-project="bugs"] .orbit-detail-section[data-section="insight"] .orbit-bugs-benchmark-takeaway {
+  display:flex;
+  align-items:center;
+  gap:9px;
+  margin-top:19px;
+  min-width:0;
+}
+.orbit-project-detail[data-project="bugs"] .orbit-detail-section[data-section="insight"] .orbit-bugs-benchmark-takeaway b {
+  font-size:calc(17px * var(--orbit-type-adjust,1));
+  font-weight:700;
+  line-height:1.22;
+  letter-spacing:-.025em;
+  white-space:nowrap;
+  flex:0 0 auto;
+}
+.orbit-project-detail[data-project="bugs"] .orbit-detail-section[data-section="insight"] .orbit-bugs-benchmark-takeaway span {
+  font-size:calc(12px * var(--orbit-type-adjust,1));
+  font-weight:430;
+  line-height:1.4;
+  letter-spacing:-.02em;
+  flex:1 1 0;
+  min-width:0;
+  overflow-wrap:normal;
+  word-break:keep-all;
+}
+/* The second left research caption needs one line, not a smaller font.
+   Keep its inherited responsive font size exactly as in v1.50.92 (0pt decrease).
+   Let its one-line content use the adjacent column gap when necessary. */
+.orbit-project-detail[data-project="bugs"] .orbit-detail-section[data-section="insight"] .orbit-detail-insight-rows article:nth-child(2) .orbit-detail-row-caption {
+  gap:9px;
+  overflow:visible;
+}
+.orbit-project-detail[data-project="bugs"] .orbit-detail-section[data-section="insight"] .orbit-detail-insight-rows article:nth-child(2) .orbit-detail-row-caption>div {
+  min-width:0;
+  overflow:visible;
+}
+.orbit-project-detail[data-project="bugs"] .orbit-detail-section[data-section="insight"] .orbit-detail-insight-rows article:nth-child(2) .orbit-detail-row-caption p {
+  white-space:nowrap;
+  width:max-content;
+  max-width:none;
+  letter-spacing:-.02em;
+  overflow-wrap:normal;
+  word-break:normal;
+}
+
+
+/* v1.50.94 — OVERVIEW geometry from the marked layout (all six modals).
+   Keep the full-width heading and the two approved tracks. All interior copy,
+   four inline tags, project/date and five swatches must stay within their tracks. */
+.orbit-project-detail .orbit-detail-section[data-section="overview"] .orbit-detail-overview-grid {
+  display:grid;
+  grid-template-columns:minmax(0,320px) minmax(0,248px);
+  gap:20px;
+  align-items:start;
+}
+.orbit-project-detail .orbit-detail-section[data-section="overview"] .orbit-detail-overview-grid>div {
+  min-width:0;
+  max-width:100%;
+  box-sizing:border-box;
+}
+.orbit-project-detail .orbit-detail-section[data-section="overview"] .orbit-detail-summary,
+.orbit-project-detail .orbit-detail-section[data-section="overview"] .orbit-detail-description {
+  max-width:100%;
+  min-width:0;
+  overflow-wrap:anywhere;
+  word-break:keep-all;
+}
+.orbit-project-detail .orbit-detail-section[data-section="overview"] .orbit-detail-summary .orbit-detail-copy-line,
+.orbit-project-detail .orbit-detail-section[data-section="overview"] .orbit-detail-description .orbit-detail-copy-line {
+  white-space:normal;
+  overflow-wrap:anywhere;
+  word-break:keep-all;
+}
+.orbit-project-detail .orbit-detail-section[data-section="overview"] .orbit-detail-overview-grid>div:last-child .orbit-detail-tags {
+  display:flex;
+  flex-wrap:nowrap;
+  justify-content:flex-start;
+  align-items:center;
+  gap:5px;
+  width:100%;
+  max-width:100%;
+  min-width:0;
+}
+.orbit-project-detail .orbit-detail-section[data-section="overview"] .orbit-detail-tags>span {
+  font-size:calc(9.9px * var(--orbit-type-adjust,1)); /* v1.50.93 baseline 9px × exactly 1.1 */
+  line-height:1.3;
+  padding:2px 3px;
+  letter-spacing:-.045em;
+  white-space:nowrap;
+  flex:0 1 auto;
+  min-width:0;
+  max-width:100%;
+}
+.orbit-project-detail .orbit-detail-section[data-section="overview"] .orbit-detail-period,
+.orbit-project-detail .orbit-detail-section[data-section="overview"] .orbit-detail-colors {
+  width:100%;
+  min-width:0;
+  max-width:100%;
+  box-sizing:border-box;
+}
+.orbit-project-detail .orbit-detail-section[data-section="overview"] .orbit-detail-period>strong,
+.orbit-project-detail .orbit-detail-section[data-section="overview"] .orbit-detail-period>span {
+  white-space:nowrap;
+}
+/* The existing <=960px rule widened the left track beyond the reference
+   image; preserve the two marked tracks even at laptop viewport heights. */
+@media (max-height:960px) {
+  .orbit-project-detail .orbit-detail-section[data-section="overview"] .orbit-detail-overview-grid {
+    grid-template-columns:minmax(0,320px) minmax(0,248px);
+    gap:20px;
+  }
+}
+
+/* v1.50.97 — OVERVIEW hashtag row must stay inside the marked 216px zone.
+   Preserve the 9.9px (original 9px * 1.1) font and 5px item spacing.
+   Increase EACH side of a tag's horizontal padding by exactly 1.5px. */
+.orbit-project-detail .orbit-detail-section[data-section="overview"] .orbit-detail-overview-grid>div:last-child .orbit-detail-tags {
+  width:216px;
+  max-width:100%;
+  gap:5px;
+  flex-wrap:nowrap;
+  justify-content:flex-start;
+  overflow:hidden;
+}
+.orbit-project-detail .orbit-detail-section[data-section="overview"] .orbit-detail-tags>span {
+  font-size:calc(9.9px * var(--orbit-type-adjust,1));
+  padding:2px 4.5px;
+  flex:0 0 auto;
+  white-space:nowrap;
+}
+
+/* v1.50.98 — typography, overview and HUD (source stage 1440 x 1024).
+   Stage --s already scales type with the viewport; js/app.js caps that scale at 2.5.
+   Preserve the approved 320/248px layout, 216px hashtag limit and palette gaps. */
+:root { --orbit-title-ink:#FFFFFF; --orbit-body-ink:#B3CBFF; --orbit-chapter-ink:#739DF8; }
+#stage, #stage button, #stage input, #stage textarea { font-family:var(--font-ko),"Pretendard",sans-serif; }
+/* The existing shared Pretendard Variable stack is retained for Korean and Latin. */
+.orbit-project-detail .orbit-detail-overview-content h2,
+.orbit-project-detail .orbit-detail-section h3,
+.orbit-project-detail .orbit-detail-issues h4,
+.orbit-project-detail .orbit-detail-key-insight strong,
+.orbit-project-detail .orbit-detail-row-caption strong,
+.orbit-project-detail .orbit-detail-direction h4,
+.orbit-project-detail .orbit-detail-solution-points h4 { color:var(--orbit-title-ink); }
+.orbit-project-detail .orbit-detail-kicker { color:var(--orbit-chapter-ink);font-weight:300; }
+.orbit-project-detail .orbit-detail-description,
+.orbit-project-detail .orbit-detail-issues article p,
+.orbit-project-detail .orbit-detail-key-insight p,
+.orbit-project-detail .orbit-detail-row-caption p,
+.orbit-project-detail .orbit-detail-direction>p,
+.orbit-project-detail .orbit-detail-solution-points li,
+.orbit-project-detail .orbit-detail-solution-points article p,
+.profile .profile-lead,.profile .profile-more { color:var(--orbit-body-ink); }
+/* Readable topic pills remain INSIDE the 216px outlined reference track. */
+.orbit-project-detail .orbit-detail-section[data-section="overview"] .orbit-detail-tags>span {
+  font-size:calc(10.89px * var(--orbit-type-adjust,1)); /* 9.9 × 1.10, no larger */
+  padding:2px 4.5px;
+}
+.orbit-project-detail .orbit-detail-section[data-section="overview"] .orbit-detail-period strong {
+  font-weight:700;
+}
+.orbit-project-detail .orbit-detail-section[data-section="overview"] .orbit-detail-period span {
+  font-weight:650;
+}
+/* Hex-code labels only: 8px -> 12px; preserve original swatch geometry/gap 10px.
+   Narrow their glyph width, not their CSS font size, to prevent cross-swatch overlap. */
+.orbit-project-detail .orbit-detail-section[data-section="overview"] .orbit-detail-colors small {
+  font-size:calc(12px * var(--orbit-type-adjust,1));
+  line-height:1.1;
+  font-weight:500;
+  letter-spacing:-.03em;
+  white-space:nowrap;
+  transform:scaleX(.75);
+  transform-origin:top left;
+  width:133.333%;
+}
+/* Shift right-side chapter navigation and close control 4 stage px away from panel. */
+.orbit-project-detail .orbit-detail-nav { left:1232px; }
+.orbit-project-detail .orbit-detail-close { left:1230px; }
+
+/* v1.50.98 final — exact approved 4-role palette. Do not override
+   any project-specific images, animation or navigation state styles. */
+:root {
+  --orbit-title-ink:#FFFFFF;
+  --orbit-subtitle-ink:#CCD9F5;
+  --orbit-body-ink:#9DA7BD;
+  --orbit-chapter-ink:#739DF8;
+  --font-en:"Pretendard Variable","Pretendard",system-ui,sans-serif;
+  --font-ko:"Pretendard Variable","Pretendard",system-ui,sans-serif;
+}
+/* The entire stage shares the same variable family, including English labels. */
+#stage {font-family:var(--font-ko);}
+.orbit-project-detail .orbit-detail-overview-content h2,
+.orbit-project-detail .orbit-detail-section h3,
+.orbit-project-detail .orbit-detail-direction h4,
+.orbit-project-detail .orbit-detail-issues h4,
+.orbit-project-detail .orbit-detail-solution-points h4,
+.orbit-project-detail .orbit-detail-key-insight strong {color:#FFFFFF;}
+.orbit-project-detail .orbit-detail-summary,
+.orbit-project-detail .orbit-detail-row-caption strong,
+.orbit-project-detail .orbit-detail-direction>span,
+.orbit-project-detail .orbit-detail-issues article strong,
+.orbit-project-detail .orbit-detail-period {color:#CCD9F5;}
+.orbit-project-detail .orbit-detail-description,
+.orbit-project-detail .orbit-detail-key-insight p,
+.orbit-project-detail .orbit-detail-issues article p,
+.orbit-project-detail .orbit-detail-row-caption p,
+.orbit-project-detail .orbit-detail-direction>p,
+.orbit-project-detail .orbit-detail-solution-points li,
+.orbit-project-detail .orbit-detail-solution-points article p,
+.orbit-project-detail .orbit-detail-colors small,
+.profile .profile-more, .profile .profile-lead {color:#9DA7BD;}
+.orbit-project-detail .orbit-detail-kicker {color:#739DF8;font-weight:300;}
+/* A nested semantic span must not override the revised period ink. */
+.orbit-project-detail .orbit-detail-period>strong,
+.orbit-project-detail .orbit-detail-period>span {color:#CCD9F5;}
+
+
+/* v1.50.98 COMPLETE — scoped typography and PROBLEM motion refinements. */
+/* Preserve user-approved subdued subtitle and the exact four editorial inks. */
+.orbit-project-detail .orbit-detail-section[data-section="problem"] .orbit-detail-key-insight>strong,
+.orbit-project-detail[data-project="hwalok"] .orbit-cave-problem-key>strong {color:#739DF8!important;}
+/* ISSUE copy legibility: +10%, without changing the unboxed CAVE layout. */
+.orbit-project-detail .orbit-detail-section[data-section="problem"] .orbit-detail-key-insight>p {font-size:calc(calc(var(--orbit-problem-insight-copy,15px)*1.1) * var(--orbit-type-adjust,1));}
+.orbit-project-detail:is([data-project="bugs"],[data-project="aladin"]) .orbit-detail-section[data-section="problem"] .orbit-detail-key-insight>p {font-size:calc(15.4px * var(--orbit-type-adjust,1));line-height:1.48;}
+.orbit-project-detail[data-project="hwalok"] .orbit-cave-problem-key>p {font-size:calc(14.3px * var(--orbit-type-adjust,1));}
+/* Animation caption text: raised 20% while preserving screenshot/phone viewport clipping. */
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-problem-screen .orbit-problem-film-caption,
+.orbit-project-detail[data-project="aladin"] .orbit-aladin-problem-screen .orbit-problem-film-caption {font-size:calc(10.8px * var(--orbit-type-adjust,1));}
+.orbit-project-detail[data-project="naver"] .orbit-naver-film-caption {font-size:calc(12.36px * var(--orbit-type-adjust,1));}
+.orbit-project-detail[data-project="hwalok"] .orbit-cave-film-caption span {font-size:calc(19.2px * var(--orbit-type-adjust,1));}
+/* ISSUE markers live above annotation artwork, foreground frame and active slide. */
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-problem-annotation:has(.issue-bg),
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-problem-playlist-mark {z-index:8;isolation:isolate;}
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-problem-player .issue-bg,
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-problem-playlist-mark circle:not(.ring) {transform-box:fill-box;transform-origin:center;transform:scale(.83);}
+/* Delay transmission until waiting label has appeared (logo-navigation.js). */
+.orbit-satellite-ui.is-waiting:not(.is-transmitting) .orbit-satellite-radio,
+.orbit-satellite-ui.is-waiting:not(.is-transmitting) .orbit-satellite-beep {opacity:0!important;animation-play-state:paused;}
+.orbit-satellite-ui .orbit-satellite-beep {transform:rotate(17deg);}
+@media(prefers-reduced-motion:reduce){
+  .orbit-satellite-ui.is-waiting.is-transmitting .orbit-satellite-radio {opacity:1;}
+}
+/* PROFILE prose uses the user-defined subtitle/body hierarchy. */
+.profile .profile-lead{color:#CCD9F5!important;}
+.profile .profile-more,.profile .profile-more-inner{color:#9DA7BD!important;}
+
+
+/* v1.50.100 — all six DETAIL modals; position only, no reparent/resize.
+   Leave the approved 320/248 overview columns and palette spacing untouched. */
+.orbit-project-detail .orbit-detail-viewport { left:382px; }
+.orbit-project-detail .orbit-detail-nav { left:1244px; }
+.orbit-project-detail .orbit-detail-close { left:1242px; }
+/* Make tags visibly more readable, but remain within the marked 216px line.
+   The renderer displays only 3 if 4 would exceed the measured available width. */
+.orbit-project-detail .orbit-detail-section[data-section="overview"] .orbit-detail-tags>span {
+  font-size:calc(12.3px * var(--orbit-type-adjust,1));
+  line-height:1.35;
+  padding:2px 4.5px;
+  flex:0 0 auto;
+}
+
+/* v1.50.101 — INSIGHT BENCHMARK REFERENCE editorial hierarchy.
+   NAVER and ALADIN share the same user-approved reference component.
+   Extend into the existing right-side inset only; leave the left analysis
+   images, 5-chapter scroll positioning, and HUD unchanged. */
+.orbit-project-detail:is([data-project="naver"],[data-project="aladin"])
+ .orbit-detail-section[data-section="insight"] .orbit-naver-insight-reference {
+  width:calc(100% + 30px);
+  max-width:calc(100% + 30px);
+  box-sizing:border-box;
+  min-width:0;
+}
+/* Eyebrow follows the same scale as the adjacent left analysis title (24px),
+   but is slightly smaller to preserve its secondary heading role. */
+.orbit-project-detail:is([data-project="naver"],[data-project="aladin"])
+ .orbit-detail-section[data-section="insight"] .orbit-naver-insight-reference-head strong {
+  font-size:calc(22px * var(--orbit-type-adjust,1));
+  font-weight:650;
+  line-height:1.2;
+  letter-spacing:-.025em;
+  color:#ccd9f5;
+}
+.orbit-project-detail:is([data-project="naver"],[data-project="aladin"])
+ .orbit-detail-section[data-section="insight"] .orbit-naver-insight-reference-head p {
+  font-size:calc(13px * var(--orbit-type-adjust,1));
+  font-weight:420;
+  line-height:1.45;
+  letter-spacing:-.015em;
+  color:#9da7bd;
+  margin-top:7px;
+  word-break:keep-all;
+}
+.orbit-project-detail:is([data-project="naver"],[data-project="aladin"])
+ .orbit-detail-section[data-section="insight"] .orbit-naver-insight-reference-list {
+  gap:12px;
+  margin-top:13px;
+}
+.orbit-project-detail:is([data-project="naver"],[data-project="aladin"])
+ .orbit-detail-section[data-section="insight"] .orbit-naver-insight-reference-card {
+  grid-template-columns:minmax(0,1fr) 120px;
+  gap:12px;
+  align-items:center;
+  min-width:0;
+}
+.orbit-project-detail:is([data-project="naver"],[data-project="aladin"])
+ .orbit-detail-section[data-section="insight"] .orbit-naver-insight-reference-copy {
+  min-width:0;
+}
+.orbit-project-detail:is([data-project="naver"],[data-project="aladin"])
+ .orbit-detail-section[data-section="insight"] .orbit-naver-insight-reference-copy span {
+  font-size:calc(18px * var(--orbit-type-adjust,1));
+  line-height:1.2;
+  font-weight:670;
+  color:#ffffff;
+}
+.orbit-project-detail:is([data-project="naver"],[data-project="aladin"])
+ .orbit-detail-section[data-section="insight"] .orbit-naver-insight-reference-copy b {
+  font-size:calc(14px * var(--orbit-type-adjust,1));
+  line-height:1.3;
+  margin-top:4px;
+  font-weight:630;
+  color:#ccd9f5;
+}
+.orbit-project-detail:is([data-project="naver"],[data-project="aladin"])
+ .orbit-detail-section[data-section="insight"] .orbit-naver-insight-reference-copy p {
+  font-size:calc(12px * var(--orbit-type-adjust,1));
+  line-height:1.42;
+  margin-top:5px;
+  font-weight:420;
+  color:#9da7bd;
+  word-break:keep-all;
+}
+
+/* v1.50.102 — NAVER INSIGHT: match the user's NAVER_INSIGHT_.png layout.
+   The earlier v1.50.101 edit only widened the benchmark; v1.50.52's
+   margin-top:160px continued to place it a full row too low.
+   Keep the existing copy, source images, lightbox and left analysis intact. */
+.orbit-project-detail[data-project="naver"]
+ .orbit-detail-section[data-section="insight"] .orbit-naver-insight-reference {
+  margin-top:62px;
+  padding-top:13px;
+  width:calc(100% + 30px);
+  max-width:calc(100% + 30px);
+  min-width:0;
+  box-sizing:border-box;
+}
+.orbit-project-detail[data-project="naver"]
+ .orbit-detail-section[data-section="insight"] .orbit-naver-insight-reference-head strong {
+  font-size:calc(23.2px * var(--orbit-type-adjust,1));
+  line-height:1.22;
+  font-weight:650;
+  letter-spacing:-.025em;
+}
+.orbit-project-detail[data-project="naver"]
+ .orbit-detail-section[data-section="insight"] .orbit-naver-insight-reference-list {
+  margin-top:27px;
+  gap:35px;
+}
+.orbit-project-detail[data-project="naver"]
+ .orbit-detail-section[data-section="insight"] .orbit-naver-insight-reference-card {
+  grid-template-columns:minmax(0,1fr) 142px;
+  column-gap:12px;
+  align-items:start;
+}
+.orbit-project-detail[data-project="naver"]
+ .orbit-detail-section[data-section="insight"] .orbit-naver-insight-reference-copy span {
+  font-size:calc(23px * var(--orbit-type-adjust,1));
+  line-height:1.16;
+  font-weight:670;
+}
+.orbit-project-detail[data-project="naver"]
+ .orbit-detail-section[data-section="insight"] .orbit-naver-insight-reference-copy b {
+  font-size:calc(15px * var(--orbit-type-adjust,1));
+  line-height:1.32;
+  margin-top:4px;
+}
+.orbit-project-detail[data-project="naver"]
+ .orbit-detail-section[data-section="insight"] .orbit-naver-insight-reference-copy p {
+  font-size:calc(12px * var(--orbit-type-adjust,1));
+  line-height:1.42;
+  margin-top:11px;
+}
+
+/* v1.50.103 — ALADIN INSIGHT: match the same approved layout now in ALADIN.
+   Preserve Kyobo/YES24 source images and all ALADIN copy.
+   Keep the existing copy, source images, lightbox and left analysis intact. */
+.orbit-project-detail[data-project="aladin"]
+ .orbit-detail-section[data-section="insight"] .orbit-naver-insight-reference {
+  margin-top:62px;
+  top:0; /* reset legacy ALADIN top:16px offset */
+  padding-top:13px;
+  width:calc(100% + 30px);
+  max-width:calc(100% + 30px);
+  min-width:0;
+  box-sizing:border-box;
+}
+.orbit-project-detail[data-project="aladin"]
+ .orbit-detail-section[data-section="insight"] .orbit-naver-insight-reference-head strong {
+  font-size:calc(23.2px * var(--orbit-type-adjust,1));
+  line-height:1.22;
+  font-weight:650;
+  letter-spacing:-.025em;
+}
+.orbit-project-detail[data-project="aladin"]
+ .orbit-detail-section[data-section="insight"] .orbit-naver-insight-reference-list {
+  margin-top:27px;
+  gap:35px;
+}
+.orbit-project-detail[data-project="aladin"]
+ .orbit-detail-section[data-section="insight"] .orbit-naver-insight-reference-card {
+  grid-template-columns:minmax(0,1fr) 142px;
+  column-gap:12px;
+  align-items:start;
+}
+.orbit-project-detail[data-project="aladin"]
+ .orbit-detail-section[data-section="insight"] .orbit-naver-insight-reference-copy span {
+  font-size:calc(23px * var(--orbit-type-adjust,1));
+  line-height:1.16;
+  font-weight:670;
+}
+.orbit-project-detail[data-project="aladin"]
+ .orbit-detail-section[data-section="insight"] .orbit-naver-insight-reference-copy b {
+  font-size:calc(15px * var(--orbit-type-adjust,1));
+  line-height:1.32;
+  margin-top:4px;
+}
+.orbit-project-detail[data-project="aladin"]
+ .orbit-detail-section[data-section="insight"] .orbit-naver-insight-reference-copy p {
+  font-size:calc(12px * var(--orbit-type-adjust,1));
+  line-height:1.42;
+  margin-top:11px;
+}
+
+
+
+/* v1.50.105 — User-requested INSIGHT zoom, PROBLEM captions and issue markers.
+   This file is loaded after all per-project styles; avoid changing other panels. */
+.orbit-project-detail .orbit-detail-section[data-section="insight"] img.orbit-insight-zoomable {
+  cursor:zoom-in;pointer-events:auto;
+}
+.orbit-project-detail .orbit-detail-section[data-section="insight"] img.orbit-insight-zoomable:focus-visible {
+  outline:2px solid #739DF8;outline-offset:3px;
+}
+/* The background caption stripe and its text both scale to 120%, exactly. */
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-problem-screen .orbit-problem-film-caption,
+.orbit-project-detail[data-project="aladin"] .orbit-aladin-problem-screen .orbit-problem-film-caption {
+  height:34.8px;font-size:calc(12.96px * var(--orbit-type-adjust,1));box-sizing:border-box;
+}
+.orbit-project-detail[data-project="naver"] .orbit-naver-film-caption {
+  height:34.8px;font-size:calc(14.832px * var(--orbit-type-adjust,1));box-sizing:border-box;
+}
+.orbit-project-detail[data-project="naver"] .orbit-naver-scroll-viewport {bottom:34.8px;}
+/* BUGS' source SVG discs are enlarged 2x relative to the pre-v1.50.105
+   visible .83 transform. Number text is also doubled, never behind the frame. */
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-problem-player .issue-bg,
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-problem-playlist-mark circle:not(.ring) {
+  transform-box:fill-box;transform-origin:center;transform:scale(1.66);
+}
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-problem-player .issue-num,
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-problem-playlist-mark .issue-num {
+  font-size:calc(11px * var(--orbit-type-adjust,1));
+}
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-problem-player>.orbit-bugs-problem-annotation:has(.issue-bg),
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-problem-playlist-mark {
+  z-index:9;overflow:visible;
+}
+/* NAVER documentary highlight badges: one foreground disc in each scene.
+   40px = 2x the 20px baseline; annotations do not modify captured images. */
+.orbit-project-detail[data-project="naver"] .orbit-naver-number-badge {
+  position:absolute;z-index:10;display:flex;align-items:center;justify-content:center;
+  width:40px;height:40px;border-radius:50%;background:#739DF8;color:#FFFFFF;
+  box-shadow:0 0 0 2px rgba(255,255,255,.9),0 1px 6px rgba(23,68,139,.35);
+  font:700 calc(17px * var(--orbit-type-adjust,1))/1 Pretendard,Arial,sans-serif;pointer-events:none;
+}
+.orbit-project-detail[data-project="naver"] .orbit-naver-number-badge--1 {right:8px;top:83px;}
+.orbit-project-detail[data-project="naver"] .orbit-naver-number-badge--2 {right:10px;top:123px;}
+.orbit-project-detail[data-project="naver"] .orbit-naver-number-badge--3 {right:10px;top:89px;}
+
+/* v1.50.106 — Same 40px foreground ISSUE discs in all animated PROBLEM
+   layouts. SVG-baked BUGS markers are hidden; their replacement sits outside
+   the 2.4x playlist zoom. ALADIN clean artwork retains all original callouts. */
+.orbit-project-detail .orbit-problem-uniform-badge {
+ position:absolute;z-index:24;display:grid;place-items:center;
+ width:40px;height:40px;box-sizing:border-box;border-radius:50%;
+ background:#ff3c8a;color:#fff;font:700 calc(17px * var(--orbit-type-adjust,1))/1 Pretendard,Arial,sans-serif;
+ pointer-events:none;opacity:0;transition:opacity .35s ease;
+ box-shadow:0 0 0 2px rgba(255,255,255,.86),0 4px 15px rgba(0,0,0,.25);
+}
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-problem-player .issue-bg,
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-problem-player .issue-num,
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-problem-playlist-mark {opacity:0!important;animation:none!important}
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-problem-screen>.orbit-problem-uniform-badge {background:#ff575f}
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-badge--1 {right:1px;top:calc(48.5% - 20px)}
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-badge--2 {right:2px;top:calc(37% - 20px)}
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-badge--3 {right:1px;top:calc(82% - 20px)}
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-problem-animated[data-bugs-stage="zone"] .orbit-bugs-badge--1,
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-problem-animated:is([data-bugs-stage="zoom"],[data-bugs-stage="unzoom"]) .orbit-bugs-badge--2,
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-problem-animated[data-bugs-stage="controls"] .orbit-bugs-badge--3 {opacity:1}
+.orbit-project-detail[data-project="aladin"] .orbit-aladin-film-scene>.orbit-problem-uniform-badge {background:#ec1a95}
+/* Coordinates follow the existing 656x1406 and 652x1404 source screenshots. */
+.orbit-project-detail[data-project="aladin"] .orbit-aladin-badge--1a {right:1px;top:calc(64.7% - 20px)}
+.orbit-project-detail[data-project="aladin"] .orbit-aladin-badge--1b {left:calc(81.1% - 20px);top:calc(87.6% - 20px)}
+.orbit-project-detail[data-project="aladin"] .orbit-aladin-badge--2 {left:calc(32.6% - 20px);top:calc(37.8% - 20px)}
+.orbit-project-detail[data-project="aladin"] .orbit-aladin-badge--3 {left:calc(60.1% - 20px);top:calc(40.7% - 20px)}
+.orbit-project-detail[data-project="aladin"] .orbit-aladin-problem-film[data-aladin-stage="focus1"] .orbit-aladin-film-scene--1 .orbit-problem-uniform-badge,
+.orbit-project-detail[data-project="aladin"] .orbit-aladin-problem-film[data-aladin-stage="focus2"] .orbit-aladin-film-scene--2 .orbit-problem-uniform-badge,
+.orbit-project-detail[data-project="aladin"] .orbit-aladin-problem-film[data-aladin-stage="focus3"] .orbit-aladin-film-scene--3 .orbit-problem-uniform-badge {opacity:1}
+.orbit-project-detail[data-project="naver"] .orbit-naver-number-badge {width:40px;height:40px;box-sizing:border-box;transform:none!important;flex-shrink:0}
+.orbit-project-detail[data-project="hwalok"] .orbit-cave-problem-box::before {width:40px;height:40px;box-sizing:border-box;top:-20px;right:-20px;font-size:calc(17px * var(--orbit-type-adjust,1))}
+
+/* v1.50.107 — All PROBLEM numbers 2/3 of v1.50.106 baseline (40px). */
+.orbit-project-detail .orbit-problem-uniform-badge{
+ width:26.6667px!important;height:26.6667px!important;
+ font-size:calc(11.3333px * var(--orbit-type-adjust,1)) !important;
+ box-shadow:0 0 0 1.4px rgba(255,255,255,.86),0 3px 10px rgba(0,0,0,.25)!important;
+}
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-badge--1{top:calc(48.5% - 13.333px)}
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-badge--2{top:calc(37% - 13.333px)}
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-badge--3{top:calc(82% - 13.333px)}
+.orbit-project-detail[data-project="aladin"] .orbit-aladin-badge--1a{top:calc(64.7% - 13.333px)}
+.orbit-project-detail[data-project="aladin"] .orbit-aladin-badge--1b{left:calc(81.1% - 13.333px);top:calc(87.6% - 13.333px)}
+.orbit-project-detail[data-project="aladin"] .orbit-aladin-badge--2{left:calc(32.6% - 13.333px);top:calc(37.8% - 13.333px)}
+.orbit-project-detail[data-project="aladin"] .orbit-aladin-badge--3{left:calc(60.1% - 13.333px);top:calc(40.7% - 13.333px)}
+.orbit-project-detail[data-project="naver"] .orbit-naver-number-badge{
+ width:26.6667px!important;height:26.6667px!important;font-size:calc(11.3333px * var(--orbit-type-adjust,1)) !important;
+}
+.orbit-project-detail[data-project="hwalok"] .orbit-cave-problem-box::before{
+ width:26.6667px!important;height:26.6667px!important;
+ top:-13.333px!important;right:-13.333px!important;font-size:calc(11.3333px * var(--orbit-type-adjust,1)) !important;
+}
+
+/* v1.50.120 — OVERVIEW metadata aligned to the right blue markup guide.
+   320px left copy + 38px gutter + 248px metadata = the existing 606px
+   inner width (713px panel - two 52.5px paddings - two borders). This uses the previously
+   unused 18px on the right WITHOUT moving the modal, navigation or headline.
+   Keep all hashtag/palette spacing and right-column width unchanged. */
+.orbit-project-detail .orbit-detail-section[data-section="overview"] .orbit-detail-overview-grid{
+  column-gap:38px;
+}
+/* v1.50.127 — user-marked polish; do not change unrelated detail sections. */
+/* INSIGHT / BUGS: align the IDC evidence image bottom with the second left
+   comparison image. Keep the source directly below and make it readable. */
+.orbit-project-detail[data-project="bugs"] .orbit-detail-section[data-section="insight"]
+ .orbit-insight-idc-evidence{
+  position:relative; /* live JS aligns its image bottom precisely on load/resize */
+}
+.orbit-project-detail[data-project="bugs"] .orbit-detail-section[data-section="insight"]
+ .orbit-insight-idc-evidence figcaption{
+  font-size:calc(13px * var(--orbit-type-adjust,1));
+  line-height:1.4;
+  font-weight:500;
+}
+/* OVERVIEW: keep existing tag-to-tag margins, grow only the pill's inner
+   breathing room and center its label in both axes. */
+.orbit-project-detail .orbit-detail-section[data-section="overview"]
+ .orbit-detail-tags>span{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  box-sizing:border-box;
+  border-radius:999px;
+  min-height:24px;
+  padding:4px 6px;
+  line-height:1.1;
+  vertical-align:middle;
+}
+/* Render 6 hexadecimal characters without '#'; one label per color block. */
+.orbit-project-detail .orbit-detail-section[data-section="overview"]
+ .orbit-detail-colors>span{
+  min-width:0;
+}
+.orbit-project-detail .orbit-detail-section[data-section="overview"]
+ .orbit-detail-colors small{
+  display:block;
+  width:100%!important;
+  max-width:100%;
+  transform:none!important;
+  /* Explicit exception to the global 12px minimum: six glyphs must fit
+     inside each fixed-width 5-swatch palette block, including at 4K. */
+  font-size:min(11px,calc(10.3px * var(--orbit-type-adjust,1)))!important;
+  font-weight:500;
+  letter-spacing:-.055em;
+  text-align:center;
+  white-space:nowrap;
+  overflow:visible;
+}
+
+
+/* v1.50.130 — consistent first-/second-row spacing in every project OVERVIEW.
+   Keep the existing left/right columns, tag typography and pill/swatches gaps.
+   The subtitle and hashtags share the first-row start and nominal 24px height;
+   the body copy and project period begin after the same 10px row gap. */
+.orbit-project-detail .orbit-detail-section[data-section="overview"] .orbit-detail-overview-grid{
+  align-items:start;
+}
+.orbit-project-detail .orbit-detail-section[data-section="overview"] .orbit-detail-overview-grid>div:first-child>.orbit-detail-summary{
+  box-sizing:border-box;
+  min-height:24px;
+  margin:0 0 10px;
+}
+.orbit-project-detail .orbit-detail-section[data-section="overview"] .orbit-detail-overview-grid>div:last-child>.orbit-detail-tags{
+  min-height:24px;
+  align-items:center;
+  align-content:center;
+  margin:0;
+}
+.orbit-project-detail .orbit-detail-section[data-section="overview"] .orbit-detail-overview-grid>div:last-child>.orbit-detail-period{
+  margin:10px 0 12px;
+}
+/* Only the five color swatch rectangles receive the requested subtle rounding. */
+.orbit-project-detail .orbit-detail-section[data-section="overview"] .orbit-detail-colors i{
+  border-radius:1.5px;
+}

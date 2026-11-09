@@ -1,0 +1,163 @@
+/* v1.50.49 — NAVER 지식iN PROBLEM only: three ISSUE-aligned scenes (16s).
+   All screenshots are supplied originals or their crops; annotation overlays
+   illustrate the current problems without replacing any real site UI.
+   The original 252x344 slot, shared detail gutter, planet/HUD remain unchanged. */
+.orbit-project-detail[data-project="naver"] .orbit-detail-section[data-section="problem"] .orbit-naver-problem-film{
+ position:relative;isolation:isolate;box-sizing:border-box;width:252px;height:344px;
+ overflow:hidden;background:#e9edf3;border:1px solid rgba(188,201,222,.42);flex:none;
+}
+.orbit-naver-film-scene{position:absolute;inset:0;opacity:0;overflow:hidden;pointer-events:none}
+.orbit-naver-film-scene img{display:block;max-width:none}
+.orbit-naver-film-home img{width:100%;height:100%;object-fit:cover;object-position:top center}
+.orbit-naver-home-focus{position:absolute;pointer-events:none;border:2px solid rgba(104,185,251,.86);border-radius:3px;box-shadow:0 0 14px rgba(57,150,237,.22);opacity:0}
+.orbit-naver-home-focus--promo{left:1.4%;top:6.7%;width:97%;height:23%}
+.orbit-naver-home-focus--list{left:1.4%;top:30%;width:76%;height:28%}
+/* Frame 02 — show the small native acceptance text next to another native answer.
+   The blue outline is an inspection highlight, not a native NAVER component. */
+.orbit-naver-film-compare{background:#eef1f5;}
+.orbit-naver-answer-pane{position:absolute;left:8px;right:8px;height:142px;border:1px solid #d2d8e1;border-radius:3px;overflow:hidden;background:#fff;box-shadow:0 1px 5px rgba(18,38,68,.12);}
+.orbit-naver-answer-pane--accepted{top:9px;}
+.orbit-naver-answer-pane--ordinary{top:163px;}
+.orbit-naver-answer-pane img{width:100%;height:100%;object-fit:cover;object-position:center center;}
+.orbit-naver-answer-pane--accepted img{object-position:center center;}
+.orbit-naver-answer-pane--ordinary img{object-position:center center;}
+.orbit-naver-answer-type{position:absolute;top:5px;right:5px;padding:3px 6px;border-radius:2px;background:rgba(11,22,43,.88);color:#fff;font-size:calc(10px * var(--orbit-type-adjust,1));line-height:1.2;font-weight:600;letter-spacing:-.02em;opacity:.96}
+/* The native, small "채택 질문자가 채택한 답변입니다." line is at the very
+   bottom-left of the accepted screenshot (source crop x=21..350, y=655..695).
+   Highlight exactly that line, not the date and blank area just above it. */
+.orbit-naver-small-accepted{position:absolute;left:3.7%;bottom:2.4%;width:35%;height:10%;box-sizing:border-box;border:1.5px solid #53baff;border-radius:2px;opacity:0;z-index:3;box-shadow:0 0 9px rgba(67,174,255,.3);}
+/* Actual screenshot crop, displayed >2x native film scale; a short connector
+   links the evidence inset to the highlighted line without blocking it. */
+.orbit-naver-accepted-zoom{position:absolute;top:83px;right:6px;width:139px;box-sizing:border-box;z-index:4;border:1px solid #71c6ff;border-radius:3px;overflow:visible;background:#fff;box-shadow:0 3px 9px rgba(14,47,78,.24);opacity:0;transform:translateY(3px) scale(.96);transform-origin:left bottom;pointer-events:none;}
+.orbit-naver-accepted-zoom::after{content:"";position:absolute;left:-12px;bottom:-8px;width:17px;height:1.5px;background:#53baff;transform:rotate(-32deg);transform-origin:right center;}
+.orbit-naver-accepted-zoom-label{display:block;padding:2px 6px;line-height:12px;font-size:calc(8.5px * var(--orbit-type-adjust,1));font-weight:700;letter-spacing:-.03em;color:#286a96;background:#eaf6ff;border-radius:2px 2px 0 0;}
+.orbit-naver-accepted-zoom img{display:block;width:100%;height:auto;max-width:none;}
+
+/* Frame 03 — user-supplied full-page NAVER capture, animated as a scroll
+   demonstration; the translucent outlines are explanatory annotations.
+   Neither the highlight nor the dashed guide is presented as native UI. */
+.orbit-naver-film-scroll{background:#fff;}
+.orbit-naver-scroll-viewport{position:absolute;inset:0 0 29px;overflow:hidden;}
+.orbit-naver-scroll-capture{position:absolute;left:0;top:0;width:100%;will-change:transform;}
+.orbit-naver-scroll-capture img{display:block;width:100%;height:auto;}
+.orbit-naver-scroll-focus{position:absolute;box-sizing:border-box;border:1.6px solid #4ab8e7;background:rgba(60,186,237,.20);box-shadow:0 0 6px rgba(52,166,237,.35);color:#0f5487;font-size:calc(9px * var(--orbit-type-adjust,1));line-height:14px;font-weight:700;letter-spacing:-.04em;padding-left:3px;pointer-events:none;white-space:nowrap;}
+.orbit-naver-scroll-focus--header{left:0;top:0;width:100%;height:25px;}
+.orbit-naver-scroll-focus--sidebar{left:70.5%;top:49px;width:28.2%;height:170px;}
+.orbit-naver-scroll-guide{position:absolute;box-sizing:border-box;opacity:0;z-index:2;border:1.4px dashed rgba(37,113,200,.82);background:rgba(115,189,250,.08);color:#135f95;font-size:calc(8.6px * var(--orbit-type-adjust,1));line-height:14px;font-weight:700;letter-spacing:-.065em;padding-left:2px;pointer-events:none;white-space:nowrap;}
+.orbit-naver-scroll-guide--header{left:0;top:0;width:100%;height:25px;}
+.orbit-naver-scroll-guide--sidebar{left:70.5%;top:49px;width:28.2%;height:170px;}
+.orbit-naver-film-caption{position:absolute;inset:auto 0 0;height:29px;z-index:5;background:linear-gradient(90deg,rgba(5,13,29,.95),rgba(5,13,29,.85));color:#eef4ff;display:flex;align-items:center;padding:0 9px;font-size:calc(10.3px * var(--orbit-type-adjust,1));font-weight:600;letter-spacing:-.045em;pointer-events:none;white-space:nowrap;}
+.orbit-naver-film-caption span{position:absolute;left:9px;opacity:0}
+/* Stopped state: first screenshot and matching caption, no blank flash. */
+.orbit-naver-film-home{opacity:1}
+.orbit-naver-problem-film:not(.is-playing) .orbit-naver-film-caption--home{opacity:1}
+.orbit-naver-problem-film.is-playing .orbit-naver-film-home{animation:orbitNaverScene1 16s linear infinite}
+.orbit-naver-problem-film.is-playing .orbit-naver-film-compare{animation:orbitNaverScene2 16s linear infinite}
+.orbit-naver-problem-film.is-playing .orbit-naver-film-scroll{animation:orbitNaverScene3 16s linear infinite}
+.orbit-naver-problem-film.is-playing .orbit-naver-film-home img{animation:orbitNaverHomeZoom 16s ease-in-out infinite}
+.orbit-naver-problem-film.is-playing .orbit-naver-home-focus--promo{animation:orbitNaverPromo 16s linear infinite}
+.orbit-naver-problem-film.is-playing .orbit-naver-home-focus--list{animation:orbitNaverList 16s linear infinite}
+.orbit-naver-problem-film.is-playing .orbit-naver-answer-pane--accepted{animation:orbitNaverCompareAccepted 16s ease-in-out infinite}
+.orbit-naver-problem-film.is-playing .orbit-naver-answer-pane--ordinary{animation:orbitNaverCompareOrdinary 16s ease-in-out infinite}
+.orbit-naver-problem-film.is-playing .orbit-naver-small-accepted{animation:orbitNaverAcceptedHighlight 16s linear infinite}
+.orbit-naver-problem-film.is-playing .orbit-naver-accepted-zoom{animation:orbitNaverAcceptedZoom 16s ease-in-out infinite}
+.orbit-naver-problem-film.is-playing .orbit-naver-scroll-capture{animation:orbitNaverScrollAway 16s cubic-bezier(.42,0,.28,1) infinite}
+.orbit-naver-problem-film.is-playing .orbit-naver-scroll-guide{animation:orbitNaverScrollGuide 16s ease-out infinite}
+.orbit-naver-problem-film.is-playing .orbit-naver-film-caption--home{animation:orbitNaverScene1 16s linear infinite}
+.orbit-naver-problem-film.is-playing .orbit-naver-film-caption--compare{animation:orbitNaverScene2 16s linear infinite}
+.orbit-naver-problem-film.is-playing .orbit-naver-film-caption--scroll{animation:orbitNaverScene3 16s linear infinite}
+/* Scene timing: 01 0–5s, 02 5–10s, 03 10–16s. */
+@keyframes orbitNaverScene1{0%,28%{opacity:1}33%,96%{opacity:0}100%{opacity:1}}
+@keyframes orbitNaverScene2{0%,29%{opacity:0}34%,60%{opacity:1}65%,100%{opacity:0}}
+@keyframes orbitNaverScene3{0%,61%{opacity:0}66%,94%{opacity:1}100%{opacity:0}}
+@keyframes orbitNaverHomeZoom{0%{transform:scale(1)}29%,100%{transform:scale(1.07)}}
+@keyframes orbitNaverPromo{0%,4%{opacity:0}10%,18%{opacity:1}23%,100%{opacity:0}}
+@keyframes orbitNaverList{0%,15%{opacity:0}20%,26%{opacity:1}31%,100%{opacity:0}}
+@keyframes orbitNaverCompareAccepted{0%,35%{box-shadow:0 1px 5px rgba(18,38,68,.12)}40%,45%{box-shadow:0 0 0 2px rgba(63,166,248,.9)}48%,100%{box-shadow:0 1px 5px rgba(18,38,68,.12)}}
+@keyframes orbitNaverCompareOrdinary{0%,45%{box-shadow:0 1px 5px rgba(18,38,68,.12)}49%,53%{box-shadow:0 0 0 2px rgba(63,166,248,.9)}56%,100%{box-shadow:0 1px 5px rgba(18,38,68,.12)}}
+@keyframes orbitNaverAcceptedHighlight{0%,51%{opacity:0}54%,61%{opacity:1}65%,100%{opacity:0}}
+@keyframes orbitNaverAcceptedZoom{0%,52%{opacity:0;transform:translateY(3px) scale(.96)}56%,61%{opacity:1;transform:translateY(0) scale(1)}65%,100%{opacity:0;transform:translateY(0) scale(1)}}
+@keyframes orbitNaverScrollAway{0%,66%,70%{transform:translateY(0)}93%,100%{transform:translateY(-338px)}}
+@keyframes orbitNaverScrollGuide{0%,72%{opacity:0}79%,94%{opacity:1}100%{opacity:0}}
+@media(prefers-reduced-motion:reduce){
+ .orbit-naver-problem-film *, .orbit-naver-problem-film *::before,.orbit-naver-problem-film *::after{animation:none!important;transition:none!important}
+ .orbit-naver-problem-film .orbit-naver-film-home{opacity:1!important}
+ .orbit-naver-problem-film .orbit-naver-film-scene:not(.orbit-naver-film-home){opacity:0!important}
+ .orbit-naver-problem-film .orbit-naver-film-caption--home{opacity:1!important}
+ .orbit-naver-problem-film .orbit-naver-film-caption--compare,.orbit-naver-problem-film .orbit-naver-film-caption--scroll{opacity:0!important}
+}
+
+/* v1.50.73 NAVER ONLY — BUGS/ALADIN-style upward scene entrance and blue-violet
+   dashed analysis outlines. Existing 16-second scene content, timing, accepted
+   evidence callout, scroll motion and surrounding layout are preserved. */
+.orbit-project-detail[data-project="naver"] .orbit-naver-film-compare,
+.orbit-project-detail[data-project="naver"] .orbit-naver-film-scroll{
+  animation-timing-function:linear;
+  will-change:transform,opacity;
+}
+.orbit-project-detail[data-project="naver"] .orbit-naver-problem-film.is-playing .orbit-naver-film-compare{
+  animation-name:orbitNaverBugsStyleScene2;
+}
+.orbit-project-detail[data-project="naver"] .orbit-naver-problem-film.is-playing .orbit-naver-film-scroll{
+  animation-name:orbitNaverBugsStyleScene3;
+}
+/* Scene 02 arrives from below at the pre-existing transition around 5s;
+   scene 03 uses the same motion at around 10s. */
+@keyframes orbitNaverBugsStyleScene2{
+  0%,29%{opacity:0;transform:translate3d(0,105%,0)}
+  34%,60%{opacity:1;transform:translate3d(0,0,0)}
+  65%,100%{opacity:0;transform:translate3d(0,0,0)}
+}
+@keyframes orbitNaverBugsStyleScene3{
+  0%,61%{opacity:0;transform:translate3d(0,105%,0)}
+  66%,94%{opacity:1;transform:translate3d(0,0,0)}
+  100%{opacity:0;transform:translate3d(0,0,0)}
+}
+/* BUGS and ALADIN share fine dotted strokes; apply same thickness only to
+   NAVER's explanatory rectangles, not native screenshot images. */
+.orbit-project-detail[data-project="naver"] .orbit-naver-home-focus{
+  border:1.5px dashed #777df1;
+  background:rgba(111,101,232,.075);
+  box-shadow:0 0 12px rgba(110,105,232,.18);
+}
+.orbit-project-detail[data-project="naver"] .orbit-naver-answer-pane--accepted,
+.orbit-project-detail[data-project="naver"] .orbit-naver-answer-pane--ordinary{
+  --naver-focus-outline:#777df1;
+}
+.orbit-project-detail[data-project="naver"] .orbit-naver-small-accepted{
+  border:1.5px dashed #777df1;
+  box-shadow:0 0 9px rgba(111,101,232,.25);
+}
+.orbit-project-detail[data-project="naver"] .orbit-naver-accepted-zoom{
+  border:1.5px dashed #777df1;
+}
+.orbit-project-detail[data-project="naver"] .orbit-naver-accepted-zoom::after{
+  background:#777df1;
+}
+.orbit-project-detail[data-project="naver"] .orbit-naver-scroll-focus,
+.orbit-project-detail[data-project="naver"] .orbit-naver-scroll-guide{
+  border:1.5px dashed #777df1;
+  background:rgba(111,101,232,.095);
+  box-shadow:0 0 7px rgba(111,101,232,.17);
+}
+/* Highlight pulses reuse the existing NAVER 16s cycle; the only changed
+   portion of the pane emphasis is dashed violet rather than solid blue. */
+@keyframes orbitNaverCompareAccepted{
+  0%,35%{box-shadow:0 1px 5px rgba(18,38,68,.12);outline:0 dashed transparent}
+  40%,45%{box-shadow:0 1px 5px rgba(18,38,68,.12);outline:1.5px dashed #777df1}
+  48%,100%{box-shadow:0 1px 5px rgba(18,38,68,.12);outline:0 dashed transparent}
+}
+@keyframes orbitNaverCompareOrdinary{
+  0%,45%{box-shadow:0 1px 5px rgba(18,38,68,.12);outline:0 dashed transparent}
+  49%,53%{box-shadow:0 1px 5px rgba(18,38,68,.12);outline:1.5px dashed #777df1}
+  56%,100%{box-shadow:0 1px 5px rgba(18,38,68,.12);outline:0 dashed transparent}
+}
+@media(prefers-reduced-motion:reduce){
+ .orbit-project-detail[data-project="naver"] .orbit-naver-film-compare,
+ .orbit-project-detail[data-project="naver"] .orbit-naver-film-scroll{transform:none!important;}
+}
+
+/* v1.50.76 — NAVER phone caption background 60% opaque, text remains fully opaque. */
+.orbit-project-detail[data-project="naver"] .orbit-naver-film-caption {
+  background:linear-gradient(90deg,rgba(5,13,29,.60),rgba(5,13,29,.60));
+}

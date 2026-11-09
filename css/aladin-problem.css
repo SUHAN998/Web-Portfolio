@@ -1,0 +1,145 @@
+/* v1.50.56 — ALADIN only. Same real iPhone shell and screenplay mechanics as BUGS!.
+   The six user-supplied screenshots remain unmodified: base and marked pairs,
+   and only the selected scene enters the phone display. */
+.orbit-project-detail[data-project="aladin"] .orbit-detail-section[data-section="problem"] .orbit-detail-split{
+  grid-template-columns:252px minmax(0,1fr);
+  gap:20px;
+  align-items:start;
+}
+.orbit-project-detail[data-project="aladin"] .orbit-detail-section[data-section="problem"] .orbit-aladin-problem-film{
+  position:relative;
+  width:100%;max-width:196px;
+  aspect-ratio:1450 / 2936;
+  margin:0;
+  isolation:isolate;
+  overflow:visible;
+  flex-shrink:0;
+  user-select:none;
+  pointer-events:none;
+}
+.orbit-project-detail[data-project="aladin"] .orbit-detail-section[data-section="problem"] .orbit-aladin-problem-screen{
+  position:absolute;
+  left:5.52%;top:7.32%;width:88.96%;height:90.15%;
+  background:#fff;
+  border-radius:7% / 4%;
+  overflow:hidden;
+  z-index:1;
+}
+.orbit-project-detail[data-project="aladin"] .orbit-detail-section[data-section="problem"] .orbit-aladin-film-scene{
+  position:absolute;inset:0;
+  width:100%;height:100%;
+  overflow:hidden;
+  background:#fff;
+  transform:translate3d(0,105%,0);
+  transition:transform .85s cubic-bezier(.25,.83,.27,1);
+  will-change:transform;
+}
+.orbit-project-detail[data-project="aladin"] .orbit-detail-section[data-section="problem"] .orbit-aladin-film-scene--1{
+  transform:translate3d(0,0,0);
+  z-index:1;
+}
+.orbit-project-detail[data-project="aladin"] .orbit-detail-section[data-section="problem"] .orbit-aladin-film-scene--2{z-index:2}
+.orbit-project-detail[data-project="aladin"] .orbit-detail-section[data-section="problem"] .orbit-aladin-film-scene--3{z-index:3}
+.orbit-project-detail[data-project="aladin"] .orbit-detail-section[data-section="problem"] .orbit-aladin-film-scene img{
+  display:block;
+  position:absolute;inset:0;
+  width:100%;height:100%;
+  object-fit:contain;
+  object-position:center center;
+  -webkit-user-drag:none;
+}
+.orbit-project-detail[data-project="aladin"] .orbit-detail-section[data-section="problem"] .orbit-aladin-film-marked{
+  opacity:0;
+  transition:opacity .42s ease;
+}
+/* Each new source capture rises from below, as BUGS' playlist does. */
+.orbit-project-detail[data-project="aladin"] .orbit-aladin-problem-film:is([data-aladin-stage="base2"],[data-aladin-stage="focus2"],[data-aladin-stage="base3"],[data-aladin-stage="focus3"]) .orbit-aladin-film-scene--2,
+.orbit-project-detail[data-project="aladin"] .orbit-aladin-problem-film:is([data-aladin-stage="base3"],[data-aladin-stage="focus3"]) .orbit-aladin-film-scene--3{
+  transform:translate3d(0,0,0);
+}
+/* The user's original magenta analysis markings, not approximated SVG rectangles. */
+.orbit-project-detail[data-project="aladin"] .orbit-aladin-problem-film[data-aladin-stage="focus1"] .orbit-aladin-film-scene--1 .orbit-aladin-film-marked,
+.orbit-project-detail[data-project="aladin"] .orbit-aladin-problem-film[data-aladin-stage="focus2"] .orbit-aladin-film-scene--2 .orbit-aladin-film-marked,
+.orbit-project-detail[data-project="aladin"] .orbit-aladin-problem-film[data-aladin-stage="focus3"] .orbit-aladin-film-scene--3 .orbit-aladin-film-marked{opacity:1}
+.orbit-project-detail[data-project="aladin"] .orbit-detail-section[data-section="problem"] .orbit-aladin-problem-frame{
+  display:block;
+  position:absolute;inset:0;
+  width:100%;height:100%;
+  z-index:5;
+  object-fit:fill;
+  pointer-events:none;
+  user-select:none;
+}
+/* BUGS!-matching left alignment and ISSUE/KEY INSIGHT right-hand grouping.
+   The longer confirmed ALADIN headings use 20px only inside its PROBLEM. */
+.orbit-project-detail[data-project="aladin"] .orbit-detail-section[data-section="problem"] .orbit-detail-issues{
+  gap:22px;
+}
+.orbit-project-detail[data-project="aladin"] .orbit-detail-section[data-section="problem"] .orbit-detail-issues article h4{
+  font-size:calc(20px * var(--orbit-type-adjust,1));
+  line-height:1.33;
+  margin:5px 0 7px;
+  letter-spacing:-.04em;
+  word-break:keep-all;
+}
+.orbit-project-detail[data-project="aladin"] .orbit-detail-section[data-section="problem"] .orbit-detail-issues article p{
+  line-height:1.45;
+}
+.orbit-project-detail[data-project="aladin"] .orbit-detail-section[data-section="problem"] .orbit-detail-issues article.aladin-issue-active{
+  filter:brightness(1.24);
+  transition:filter .35s ease;
+}
+.orbit-project-detail[data-project="aladin"] .orbit-detail-section[data-section="problem"] .orbit-detail-split + .orbit-detail-key-insight{
+  top:515px;
+  left:calc(var(--orbit-detail-content-inset,52.5px) + 252px + 20px);
+  right:var(--orbit-detail-content-inset,52.5px);
+  min-width:0;
+  margin:0;
+}
+.orbit-project-detail[data-project="aladin"] .orbit-detail-section[data-section="problem"] .orbit-detail-key-insight p{
+  font-size:calc(14px * var(--orbit-type-adjust,1));
+  line-height:20px;
+  word-break:keep-all;
+}
+@media(prefers-reduced-motion:reduce){
+  .orbit-project-detail[data-project="aladin"] .orbit-aladin-film-scene,
+  .orbit-project-detail[data-project="aladin"] .orbit-aladin-film-marked{
+    transition-duration:.01ms!important;
+  }
+}
+
+/* v1.50.57 — match BUGS! ISSUE vertical rhythm. The ALADIN-specific
+   20px wrapped headlines must not overlap their separate KEY INSIGHT. */
+.orbit-project-detail[data-project="aladin"] .orbit-detail-section[data-section="problem"] .orbit-detail-issues {
+  height:auto;
+  align-self:start;
+  align-content:start;
+  justify-content:normal;
+  row-gap:24px;
+}
+.orbit-project-detail[data-project="aladin"] .orbit-detail-section[data-section="problem"] .orbit-detail-split + .orbit-detail-key-insight {
+  top:515px;
+}
+/* Keep benchmark in the same second-image band as NAVER INSIGHT. */
+.orbit-project-detail[data-project="aladin"] .orbit-detail-section[data-section="insight"] .orbit-naver-insight-reference {
+  margin-top:125px;
+}
+
+/* v1.50.74 — ALADIN: same in-screen caption hierarchy and color as NAVER. */
+.orbit-project-detail[data-project="aladin"] .orbit-aladin-problem-screen .orbit-problem-film-caption{
+  position:absolute;left:0;right:0;bottom:0;z-index:4;height:29px;display:flex;
+  align-items:center;box-sizing:border-box;padding:0 8px;
+  background:linear-gradient(90deg,rgba(5,13,29,.95),rgba(5,13,29,.85));
+  color:#eef4ff;font-size:calc(9px * var(--orbit-type-adjust,1));font-weight:600;letter-spacing:-.04em;
+  white-space:nowrap;pointer-events:none;
+}
+.orbit-project-detail[data-project="aladin"] .orbit-aladin-film-caption span{display:none}
+.orbit-project-detail[data-project="aladin"] .orbit-aladin-problem-film:is([data-aladin-stage="base1"],[data-aladin-stage="focus1"]) .cap-1,
+.orbit-project-detail[data-project="aladin"] .orbit-aladin-problem-film:is([data-aladin-stage="base2"],[data-aladin-stage="focus2"]) .cap-2,
+.orbit-project-detail[data-project="aladin"] .orbit-aladin-problem-film:is([data-aladin-stage="base3"],[data-aladin-stage="focus3"]) .cap-3{display:block}
+.orbit-project-detail[data-project="aladin"] .orbit-detail-section[data-section="problem"] .orbit-detail-issues article.aladin-issue-active{filter:none!important;text-shadow:none!important}
+
+/* v1.50.76 — ALADIN phone caption background 60% opaque, text remains fully opaque. */
+.orbit-project-detail[data-project="aladin"] .orbit-aladin-problem-screen .orbit-problem-film-caption {
+  background:linear-gradient(90deg,rgba(5,13,29,.60),rgba(5,13,29,.60));
+}

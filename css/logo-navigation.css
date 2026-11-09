@@ -1,0 +1,238 @@
+/* v1.43: real SH GLB quick navigation, no replacement logo image. */
+.orbit-logo-ui{position:absolute;z-index:22;left:720px;top:141px;width:208px;height:148px;
+  transform:translate(-50%,-50%);pointer-events:none;color:#fff}
+.orbit-logo-ui[hidden]{display:none}
+.orbit-logo-toggle{position:absolute;inset:0;width:100%;height:100%;padding:0;border:0;
+  background:transparent;border-radius:16px;pointer-events:auto;cursor:pointer;
+  -webkit-tap-highlight-color:transparent}
+.orbit-logo-toggle:focus-visible{outline:1px solid rgba(255,255,255,.65);outline-offset:4px}
+/* The actual luminous white glow is a shader plane behind the 3D GLB. */
+/* v1.50.136: dock the two-option menu 11px closer to the logo;
+   keep its fill but remove the outer stroke as marked. */
+.orbit-logo-menu{position:absolute;top:100%;left:50%;transform:translate(-50%,-10px) scale(.96);
+  display:flex;align-items:center;justify-content:center;gap:0;width:222px;height:44px;
+  border:0;background:rgba(11,16,28,.89);
+  border-radius:3px;box-shadow:0 6px 25px rgba(0,0,0,.26),0 0 20px rgba(255,255,255,.07);
+  opacity:0;visibility:hidden;pointer-events:none;
+  transition:opacity .32s ease,transform .4s cubic-bezier(.16,1,.3,1),visibility .32s}
+.orbit-logo-ui.is-open .orbit-logo-menu{opacity:1;visibility:visible;pointer-events:auto;
+  transform:translate(-50%,0) scale(1)}
+.orbit-logo-menu button{appearance:none;border:0;background:transparent;color:#f5f7fd;
+  flex:1;min-width:0;height:100%;padding:0 8px;box-sizing:border-box;
+  display:flex;align-items:center;justify-content:center;text-align:center;
+  font:450 calc(16px * var(--orbit-type-adjust,1))/1 var(--font-en);letter-spacing:.025em;
+  cursor:pointer;transition:color .2s ease,text-shadow .2s ease}
+.orbit-logo-menu button:hover,.orbit-logo-menu button:focus-visible{
+  color:#fff;text-shadow:0 0 10px rgba(255,255,255,.8);outline:none}
+.orbit-logo-menu-divider{height:22px;width:1px;background:rgba(255,255,255,.45);flex:0 0 1px}
+/* CONTACT shortcut follows the approved main-flow PDF p.18
+   (text blocks and exact contact values; real satellite GLB on the right). */
+.orbit-contact-direct{position:absolute;inset:0;z-index:5;opacity:0;pointer-events:none;
+  color:#f5f8ff;font-family:var(--font-ko);text-align:left;transition:opacity .8s ease}
+.orbit-contact-direct[hidden]{display:none}
+.orbit-contact-direct.is-visible{opacity:1;pointer-events:auto}
+.orbit-contact-direct h2{position:absolute;left:336px;top:275px;margin:0;
+  font:500 calc(24px * var(--orbit-type-adjust,1))/1 var(--font-en);letter-spacing:.03em}
+.orbit-contact-direct>p{position:absolute;left:336px;top:312px;margin:0;
+  font:450 calc(40px * var(--orbit-type-adjust,1))/1.25 var(--font-ko)}
+.orbit-contact-direct-info{position:absolute;left:336px;top:411px;width:485px;text-align:left}
+.orbit-contact-direct-info>div{display:flex;flex-direction:column;align-items:flex-start}
+.orbit-contact-direct-info>div:nth-child(2){margin-top:54px}
+.orbit-contact-direct-info span{font:500 calc(28px * var(--orbit-type-adjust,1))/1 var(--font-en)}
+.orbit-contact-direct-info a{font:450 calc(40px * var(--orbit-type-adjust,1))/1 var(--font-en);color:#fff;text-decoration:none;
+  display:inline-block;transform-origin:left center;
+  margin-top:31px;pointer-events:auto;white-space:nowrap;
+  transition:transform .55s cubic-bezier(.22,1,.36,1),text-shadow .55s ease,color .55s ease}
+.orbit-contact-direct-info a:hover,.orbit-contact-direct-info a:focus-visible{
+  transform:scale(1.1);text-decoration:none;color:#fff;
+  text-shadow:0 0 9px rgba(241,248,255,.35),0 0 22px rgba(168,209,255,.18)}
+.orbit-contact-direct-info a:focus-visible{outline:1px solid rgba(190,215,255,.55);outline-offset:4px}
+@media(prefers-reduced-motion:reduce){.orbit-logo-menu,.orbit-contact-direct{transition-duration:.06s}}
+
+/* v1.46 — Storyboard pp.13–18: 3D satellite approach, radio waiting, then
+   CONTACT panel. The orbital GLB is still drawn ONLY by the shared WebGL scene. */
+.orbit-satellite-ui{position:absolute;inset:0;z-index:16;pointer-events:none;color:#f8f9ff;font-family:var(--font-ko)}
+.orbit-satellite-ui[hidden]{display:none}
+.orbit-satellite-channel{position:absolute;left:995px;top:256px;width:220px;opacity:0;transition:opacity .78s ease}
+.orbit-satellite-channel strong{font:450 calc(18px * var(--orbit-type-adjust,1))/1.25 var(--font-en);letter-spacing:.06em;color:#b9c7df}
+.orbit-satellite-channel p{font:500 calc(24px * var(--orbit-type-adjust,1))/1.2 var(--font-ko);margin:9px 0 7px}
+.orbit-satellite-channel small{font:400 calc(12px * var(--orbit-type-adjust,1))/1.6 var(--font-ko);color:rgba(228,234,248,.85)}
+.orbit-satellite-ui.is-waiting .orbit-satellite-channel{opacity:1}
+.orbit-satellite-ui.is-shifting .orbit-satellite-channel{opacity:0}
+.orbit-wait-dots{white-space:nowrap}
+.orbit-wait-dots i{font-style:normal;display:inline-block;opacity:.12;animation:orbit-wait-dot 1.5s linear infinite}
+.orbit-wait-dots i:nth-child(2){animation-delay:.18s}
+.orbit-wait-dots i:nth-child(3){animation-delay:.36s}
+@keyframes orbit-wait-dot{0%,15%{opacity:.14}30%,68%{opacity:1}90%,100%{opacity:.14}}
+/* Radio originates at the antenna (pink mark), not the center of the satellite.
+   Animated arcs are true left-facing sector paths, reaching the cyan fan's edge. */
+.orbit-satellite-radio{position:absolute;
+  left:calc(var(--satellite-emitter-x,953px) - 600px);
+  top:calc(var(--satellite-emitter-y,416px) - 500px);
+  width:600px;height:1000px;overflow:visible;opacity:0;transition:opacity .78s ease}
+.orbit-satellite-radio path{fill:none;stroke:rgba(243,248,255,.92);stroke-width:2.6;stroke-linecap:round;vector-effect:non-scaling-stroke;pointer-events:none}
+.orbit-satellite-ui.is-waiting .orbit-satellite-radio{opacity:1}
+.orbit-satellite-ui.is-shifting .orbit-satellite-radio{opacity:0}
+.orbit-satellite-beep{position:absolute;left:calc(var(--satellite-screen-x,1060px) + 190px);top:calc(var(--satellite-screen-y,470px) - 40px);font:400 calc(13px * var(--orbit-type-adjust,1))/1.4 var(--font-en);letter-spacing:.065em;opacity:0;transform:rotate(17deg);white-space:nowrap;animation:orbit-beep 3s ease-in-out infinite}
+.orbit-satellite-ui.is-waiting .orbit-satellite-beep{opacity:1}
+.orbit-satellite-ui.is-shifting .orbit-satellite-beep{opacity:0;animation:none}
+@keyframes orbit-beep{0%,13%,55%,100%{opacity:0}24%,37%{opacity:.85}}
+.orbit-satellite-hit{position:absolute;left:var(--satellite-screen-x,1060px);top:var(--satellite-screen-y,470px);transform:translate(-50%,-50%);width:410px;height:420px;border:0;background:transparent;border-radius:38%;cursor:pointer;pointer-events:none}
+.orbit-satellite-ui.is-waiting:not(.is-shifting) .orbit-satellite-hit{pointer-events:auto}
+.orbit-satellite-hit:focus-visible{outline:1px solid rgba(239,246,255,.55);outline-offset:-18px}
+/* v1.47.3: the CONTACT panel is constructed well before clicking the
+   satellite, parked COMPLETELY BELOW the 1024px stage. No opacity/fade at
+   any point of the storyboard activation/reversal. The downward dismissal
+   is exactly the same distance and curve as the upward spring in reverse. */
+.orbit-contact-direct.is-story{inset:auto;left:300px;top:228px;width:520px;height:624px;
+  opacity:1;transform:translate3d(0,1040px,0);visibility:visible;pointer-events:none;
+  background:rgba(17,21,42,.72);border:1px solid rgba(233,240,255,.43);border-radius:21px;
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  box-sizing:border-box;transition:transform .66s cubic-bezier(.25,.88,.36,1.12);
+  will-change:transform}
+.orbit-contact-direct.is-story:not(.is-visible){transition-timing-function:cubic-bezier(.64,-.12,.75,.12)}
+.orbit-contact-direct.is-story.is-visible{opacity:1;pointer-events:auto;transform:translate3d(0,0,0)}
+.orbit-contact-direct.is-story h2{left:37px;top:60px;font-size:calc(23px * var(--orbit-type-adjust,1));color:#bacbe6}
+.orbit-contact-direct.is-story>p{left:37px;top:111px;font-size:calc(37px * var(--orbit-type-adjust,1))}
+.orbit-contact-direct.is-story .orbit-contact-direct-info{left:37px;top:246px;width:440px}
+.orbit-contact-direct.is-story .orbit-contact-direct-info>div:nth-child(2){margin-top:74px}
+.orbit-contact-direct.is-story .orbit-contact-direct-info span{font-size:calc(26px * var(--orbit-type-adjust,1));color:#b3c8e9}
+.orbit-contact-direct.is-story .orbit-contact-direct-info a{font-size:calc(34px * var(--orbit-type-adjust,1));margin-top:28px}
+@media(prefers-reduced-motion:reduce){
+  .orbit-satellite-channel,.orbit-satellite-radio,.orbit-contact-direct.is-story{transition-duration:.08s}
+  .orbit-satellite-radio i,.orbit-satellite-beep,.orbit-wait-dots i{animation-duration:3s}
+}
+
+/* Soft, restrained transmission aura; generated by CSS, not a bitmap. */
+.orbit-satellite-aura{position:absolute;left:var(--satellite-screen-x,1060px);top:var(--satellite-screen-y,470px);
+  transform:translate(-50%,-50%);width:400px;height:360px;opacity:0;pointer-events:none;
+  background:radial-gradient(ellipse,rgba(237,247,255,.19) 0%,rgba(208,229,255,.075) 35%,transparent 68%);
+  transition:opacity .65s ease}
+.orbit-satellite-ui.is-waiting .orbit-satellite-aura{opacity:1}
+.orbit-satellite-ui.is-shifting .orbit-satellite-aura{opacity:.58}
+
+
+/* v1.47.6 — independent logo shortcuts; no camera/scene navigation. */
+.orbit-shortcut-profile{
+  z-index:29;background:rgba(8,12,25,.79);pointer-events:none;
+  backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);
+}
+.orbit-shortcut-profile.is-visible{pointer-events:auto}
+.orbit-shortcut-profile #orbit-shortcut-reason-text{
+  display:inline-block;width:0;min-width:0;flex:none;overflow:hidden;
+  white-space:nowrap;color:#adcfff;box-sizing:content-box;
+}
+.orbit-shortcut-profile.is-visible #orbit-shortcut-reason-text:not(.reason-complete){
+  animation:reasonOpen .9s cubic-bezier(.22,.68,0,1) .2s forwards;
+}
+.orbit-shortcut-profile #orbit-shortcut-reason-text.reason-complete{
+  animation:none!important;width:max-content!important;overflow:visible!important;
+}
+.orbit-shortcut-profile .profile-bracket{color:#adcfff}
+.orbit-shortcut-profile .profile-more{height:0;overflow:hidden;transition:height .65s cubic-bezier(.22,.68,0,1)}
+.orbit-shortcut-profile.is-expanded .profile-more{
+  height:var(--detail-exact-height,175px);overflow:hidden;
+}
+.orbit-shortcut-profile .profile-more-inner{position:absolute;top:18px;left:0;width:100%}
+.orbit-shortcut-profile .profile-toggle,
+.orbit-shortcut-profile .profile-skills{position:relative;top:auto;left:auto}
+.orbit-shortcut-close{position:absolute;right:20px;top:19px;z-index:35;width:43px;height:43px;
+  padding:7px;border:0;background:rgba(8,13,27,.22);border-radius:50%;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;pointer-events:auto}
+.orbit-shortcut-close img{width:27px;height:27px;object-fit:contain;transition:transform .26s ease,filter .2s ease}
+.orbit-shortcut-close:hover img,.orbit-shortcut-close:focus-visible img{transform:rotate(90deg);filter:brightness(1.4)}
+.orbit-shortcut-close:focus-visible{outline:1px solid #fff;outline-offset:2px}
+.orbit-shortcut-profile>.orbit-shortcut-close{top:187px;right:92px}
+/* ENDING/SATELLITE CONTACT: show the X only on the actual story card. */
+.orbit-story-contact-close{display:none}
+.orbit-contact-direct.is-story .orbit-story-contact-close{
+  display:flex;top:19px;right:20px;background:rgba(8,13,27,.22)
+}
+html.orbit-shortcut-open .orbit-logo-ui{pointer-events:none}
+/* A NEW landscape CONTACT card for the top menu — completely independent of
+   the vertically animated ENDING SIGNAL RECEIVED card. */
+.orbit-shortcut-contact{position:absolute;inset:0;z-index:29;opacity:0;pointer-events:none;
+  background:rgba(8,12,25,.79);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);color:#fff;font-family:var(--font-ko);
+  transition:opacity .3s ease;display:flex;align-items:center;justify-content:center}
+.orbit-shortcut-contact[hidden]{display:none}
+.orbit-shortcut-contact.is-visible{opacity:1;pointer-events:auto}
+.orbit-shortcut-contact-card{width:700px;height:360px;position:relative;box-sizing:border-box;
+  padding:50px 55px;background:rgba(21,27,47,.87);
+  border:1px solid rgba(213,228,251,.45);border-radius:19px;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  transform:translateY(24px);transition:transform .4s cubic-bezier(.16,1,.3,1)}
+.orbit-shortcut-contact.is-visible .orbit-shortcut-contact-card{transform:translateY(0)}
+.orbit-shortcut-contact-card h2{margin:0 0 54px;color:#e8f0ff;
+  font:500 calc(30px * var(--orbit-type-adjust,1))/1.15 var(--font-en);letter-spacing:.085em}
+.orbit-shortcut-contact-grid{display:grid;grid-template-columns:1.15fr 1fr;gap:32px}
+.orbit-shortcut-contact-field{min-width:0;display:flex;flex-direction:column;gap:23px}
+.orbit-shortcut-contact-field span{color:#b1c8ee;font:500 calc(18px * var(--orbit-type-adjust,1))/1 var(--font-en);letter-spacing:.035em}
+.orbit-shortcut-contact-field a{font:450 calc(24px * var(--orbit-type-adjust,1))/1.4 var(--font-en);white-space:nowrap;
+  color:#fff;text-decoration:none;align-self:start;display:inline-block;transform-origin:left center;
+  transition:transform .55s cubic-bezier(.22,1,.36,1),text-shadow .55s ease,color .55s ease}
+.orbit-shortcut-contact-field a:hover,.orbit-shortcut-contact-field a:focus-visible{
+  transform:scale(1.1);color:#fff;text-decoration:none;
+  text-shadow:0 0 9px rgba(241,248,255,.35),0 0 22px rgba(168,209,255,.18)}
+.orbit-shortcut-contact-field a:focus-visible{outline:1px solid rgba(190,215,255,.55);outline-offset:4px}
+@media(prefers-reduced-motion:reduce){
+  .orbit-shortcut-contact,.orbit-shortcut-contact-card{transition-duration:.06s}
+}
+@media(prefers-reduced-motion:reduce){
+  .orbit-contact-direct-info a,.orbit-shortcut-contact-field a,
+  .orbit-story-contact-close img{transition-duration:.01ms!important}
+}
+
+/* v1.48.2: no new logo graphic; only a temporary pointer hit region over actual GLB in reveal. */
+.orbit-intro-logo-drag-target{position:absolute;z-index:20;transform:translate(-50%,-50%);border:0;background:transparent;pointer-events:auto;touch-action:none;cursor:grab}
+.orbit-intro-logo-drag-target[hidden]{display:none}
+.orbit-intro-logo-drag-target:active,.orbit-logo-toggle:active{cursor:grabbing}
+
+/* Match the original Profile's exact accordion endpoint; no max-content jump. */
+.orbit-shortcut-profile #orbit-shortcut-reason-text.reason-complete{
+ width:var(--reason-exact-width)!important;overflow:visible!important;animation:none!important;
+}
+.orbit-shortcut-profile.is-visible .profile-ring{animation:none}
+.orbit-shortcut-profile.is-visible.is-reason-done .profile-ring{
+ animation:ringProgress .9s cubic-bezier(.16,.82,.27,1) 0s both;
+}
+
+/* v1.50.24 — supplied 2D orbital symbol, one image for reveal/docked/Explore.
+   Its central four-point star is ~60% of the artboard; no extra UI ornament. */
+.orbit-personal-logo {
+  position:absolute;
+  z-index:21;
+  left:720px;
+  top:345px;
+  width:412px;
+  height:auto;
+  transform:translate(-49.24%,-53.8%);
+  pointer-events:none;
+  user-select:none;
+  opacity:0;
+  transition:opacity .34s ease, filter .26s ease;
+  filter:none;
+  object-fit:contain;
+  image-rendering:auto;
+}
+.orbit-personal-logo.is-visible {opacity:var(--orbit-logo-reveal-alpha, 1)}
+.orbit-personal-logo.is-revealing {transition:filter .26s ease}
+.orbit-personal-logo.is-hovered {filter:drop-shadow(0 0 9px rgba(238,246,255,.27))}
+@media(prefers-reduced-motion:reduce){.orbit-personal-logo {transition-duration:.08s}}
+
+/* v1.50.69: the menu hit area is inactive throughout INTRO / PROFILE and
+   the PROFILE -> EXPLORE dock flight, even if the logo itself is visible. */
+.orbit-logo-ui:not(.is-interactive) .orbit-logo-toggle {
+  pointer-events:none;
+  cursor:default;
+}
+.orbit-logo-ui:not(.is-interactive) .orbit-logo-menu {
+  pointer-events:none;
+}
+/* Fast but restrained hover halo around the actual provided logo bitmap. */
+.orbit-personal-logo {
+  transition:opacity .34s ease, filter .15s ease-out;
+}
+.orbit-personal-logo.is-hovered {
+  filter:drop-shadow(0 0 7px rgba(243,249,255,.34)) drop-shadow(0 0 19px rgba(196,222,255,.20));
+}
+@media(prefers-reduced-motion:reduce){.orbit-personal-logo{transition-duration:.01ms}}

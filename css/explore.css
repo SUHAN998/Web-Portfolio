@@ -1,0 +1,225 @@
+/* 02 EXPLORE — coordinates follow the approved 1440×1024 main flow.
+   Keeps INTRO/PROFILE v1.24 completely independent. */
+.orbit-explore{position:absolute;inset:0;z-index:3;color:#f3f6fb;font-family:var(--font-ko);opacity:0;pointer-events:none;transition:opacity .95s ease}
+.orbit-explore[hidden]{display:none}
+.orbit-explore.is-visible{opacity:1;pointer-events:auto}
+.orbit-explore-heading{position:absolute;left:50%;top:46px;transform:translateX(-50%);font-size:calc(15px * var(--orbit-type-adjust,1));letter-spacing:.25em;font-weight:450;color:#f1f6ff;opacity:.64}
+.orbit-explore-mode{position:absolute;top:36px;right:138px;display:flex;align-items:center;pointer-events:auto}
+.orbit-view-button{width:43px;height:43px;background:none;border:0;position:relative;padding:0;cursor:pointer}
+.orbit-view-button img{display:block;position:absolute;width:100%;height:100%;inset:0;object-fit:contain;transition:opacity .3s ease}
+.orbit-view-button .view-off{opacity:1}.orbit-view-button .view-on{opacity:0}
+.orbit-view-button:hover .view-off,.orbit-view-button:focus-visible .view-off,.orbit-view-button.is-selected .view-off{opacity:0}
+.orbit-view-button:hover .view-on,.orbit-view-button:focus-visible .view-on,.orbit-view-button.is-selected .view-on{opacity:1}
+.orbit-view-tooltip{position:absolute;right:44px;top:87px;color:#fff;font-size:calc(13px * var(--orbit-type-adjust,1));letter-spacing:.09em;pointer-events:none;opacity:0;transition:opacity .25s}
+.orbit-view-tooltip.is-visible{opacity:1}
+.orbit-planet-labels{position:absolute;inset:0;pointer-events:none}
+.orbit-planet{position:absolute;display:block;pointer-events:auto;border:0;padding:0;margin:0;background:transparent;cursor:pointer;transform:translate(-50%,-50%);border-radius:50%;-webkit-tap-highlight-color:transparent;transition:opacity .4s ease}
+.orbit-planet:focus-visible{outline:2px solid #aecdf4;outline-offset:3px}
+/* v1.30: Compact, thin GTA-style light diffraction. Screen-space visuals
+   are cut out at the actual projected 3D planet silhouette, so the original
+   GLB is never painted over. Hit area, camera and orbit controls are untouched. */
+.orbit-planet-halo{
+  position:absolute;inset:-38%;border-radius:50%;pointer-events:none;z-index:0;
+  background:radial-gradient(circle,
+    rgba(223,241,255,.40) 0%,rgba(145,198,255,.36) 20%,
+    rgba(88,146,232,.22) 42%,rgba(52,101,185,.07) 65%,transparent 86%);
+  opacity:calc(.525 * var(--orbit-ray-fade,1));transform:scale(var(--orbit-halo-scale,1));
+  transition:opacity .52s cubic-bezier(.22,1,.36,1),filter .52s ease;
+  filter:blur(1.3px);
+  -webkit-mask-image:radial-gradient(circle at center,transparent 0 var(--orbit-halo-mask-inner,0px),#000 var(--orbit-halo-mask-outer,0px));
+  mask-image:radial-gradient(circle at center,transparent 0 var(--orbit-halo-mask-inner,0px),#000 var(--orbit-halo-mask-outer,0px));
+}
+.orbit-planet.is-red .orbit-planet-halo{background:radial-gradient(circle,
+    rgba(255,233,226,.42) 0%,rgba(255,177,165,.36) 20%,
+    rgba(243,103,119,.24) 42%,rgba(190,55,88,.08) 65%,transparent 86%)}
+.orbit-planet:hover .orbit-planet-halo,.orbit-planet:focus-visible .orbit-planet-halo{
+  opacity:calc(.875 * var(--orbit-ray-fade,1));filter:blur(1.5px) brightness(1.15)}
+
+/* Cross rays remain slender (<3px in ordinary views). A visual cut-out
+   at the center makes the beams feel physically behind the actual sphere. */
+.orbit-planet-glint{position:absolute;left:50%;top:50%;
+  width:var(--orbit-glint-size,65px);height:var(--orbit-glint-size,65px);
+  transform:translate(-50%,-50%);opacity:calc(.48 * var(--orbit-ray-fade,1) + .68 * var(--orbit-far-glint,0));pointer-events:none;z-index:0;
+  background:none;
+  transition:opacity .52s cubic-bezier(.22,1,.36,1),filter .52s ease;
+  filter:drop-shadow(0 0 2px rgba(149,204,255,.16));
+  -webkit-mask-image:radial-gradient(circle at center,transparent 0 var(--orbit-mask-inner,0px),#000 var(--orbit-mask-outer,0px));
+  mask-image:radial-gradient(circle at center,transparent 0 var(--orbit-mask-inner,0px),#000 var(--orbit-mask-outer,0px));
+}
+.orbit-planet-glint::before,.orbit-planet-glint::after{
+  content:"";display:block;position:absolute;left:50%;top:50%;
+  transform:translate(-50%,-50%);pointer-events:none}
+.orbit-planet-glint::before{width:100%;height:2.3%;max-height:3px;
+  background:radial-gradient(ellipse at center,
+    rgba(250,254,255,.94) 0%,rgba(183,219,255,.65) 12%,
+    rgba(103,172,255,.27) 41%,rgba(102,163,242,.055) 73%,transparent 100%)}
+.orbit-planet-glint::after{width:2.3%;max-width:3px;height:100%;
+  background:radial-gradient(ellipse at center,
+    rgba(250,254,255,.94) 0%,rgba(183,219,255,.65) 12%,
+    rgba(103,172,255,.27) 41%,rgba(102,163,242,.055) 73%,transparent 100%)}
+.orbit-planet.is-red .orbit-planet-glint{filter:drop-shadow(0 0 2px rgba(255,156,166,.18))}
+.orbit-planet.is-red .orbit-planet-glint::before,.orbit-planet.is-red .orbit-planet-glint::after{
+  background:radial-gradient(ellipse at center,
+    rgba(255,251,249,.94) 0%,rgba(255,191,189,.65) 12%,
+    rgba(252,117,137,.29) 41%,rgba(229,94,115,.055) 73%,transparent 100%)}
+.orbit-planet:hover .orbit-planet-glint,.orbit-planet:focus-visible .orbit-planet-glint{
+  opacity:calc(.80 * var(--orbit-ray-fade,1) + .86 * var(--orbit-far-glint,0));filter:brightness(1.20) drop-shadow(0 0 3px rgba(171,218,255,.32))}
+.orbit-planet.is-red:hover .orbit-planet-glint,.orbit-planet.is-red:focus-visible .orbit-planet-glint{
+  filter:brightness(1.17) drop-shadow(0 0 3px rgba(255,155,166,.31))}
+
+/* At extreme distance preserve a compact, bright 3.5×3.5px white point.
+   The transparent button remains the normal hit area for accessibility. */
+.orbit-planet-pinpoint{position:absolute;left:50%;top:50%;width:var(--orbit-point-size,5px);height:var(--orbit-point-size,5px);
+  transform:translate(-50%,-50%);border-radius:50%;pointer-events:none;
+  /* Soft translucent radiance replaces a harsh solid-white growing disc. */
+  background:radial-gradient(circle,rgba(250,253,255,.82) 0%,rgba(215,234,255,.43) 40%,rgba(169,211,255,.12) 73%,transparent 100%);
+  box-shadow:0 0 2px rgba(236,246,255,.16);opacity:var(--orbit-point-opacity,0);z-index:1;
+  transition:opacity .32s linear}
+.orbit-planet.is-pinpoint .orbit-planet-pinpoint{opacity:1;background:#fff;box-shadow:0 0 3px 1px rgba(236,246,255,.68)}
+.orbit-planet.is-pinpoint .orbit-planet-halo{opacity:0!important}
+/* Pinpoint-only compact cross: visible over the dark sky instead of masked by the sphere. */
+.orbit-planet.is-pinpoint .orbit-planet-glint{width:31px;height:31px;opacity:.78!important;
+  -webkit-mask-image:none;mask-image:none;filter:drop-shadow(0 0 3px rgba(194,225,255,.6))}
+.orbit-planet.is-pinpoint .orbit-planet-glint::before{height:1.4px;max-height:none}
+.orbit-planet.is-pinpoint .orbit-planet-glint::after{width:1.4px;max-width:none}
+.orbit-planet.is-pinpoint:hover .orbit-planet-pinpoint,
+.orbit-planet.is-pinpoint:focus-visible .orbit-planet-pinpoint{box-shadow:0 0 4px 1px #fff}
+/* Reference labels sit BELOW each planet, precisely horizontally centered.
+   Visibility is decided by JS across all six planets (one label maximum). */
+.orbit-project-copy{position:absolute;width:410px;top:calc(100% + 17px);left:50%;transform:translateX(-50%);text-align:center;opacity:0;pointer-events:none;transition:opacity .28s ease;white-space:normal}
+.orbit-planet.is-label-visible .orbit-project-copy{opacity:1}
+.orbit-project-arrow{display:block;font-size:calc(30px * var(--orbit-type-adjust,1));line-height:1;color:#91caff;margin:0 auto 9px;font-weight:500;text-align:center}
+.orbit-planet.is-red .orbit-project-arrow{color:#ff8c91}
+.orbit-project-category{display:block;color:#91caff;letter-spacing:.04em;font-size:calc(20px * var(--orbit-type-adjust,1));font-weight:550;line-height:1.28;text-align:center}
+.orbit-planet.is-red .orbit-project-category{color:#ff8c91}
+.orbit-project-name{display:block;color:#f7f9fe;white-space:pre-line;font-size:calc(30px * var(--orbit-type-adjust,1));font-weight:740;line-height:1.18;letter-spacing:-.025em;margin-top:12px;text-align:center}
+/* HUD geometry measured from 01_MAIN_FLOW.pdf p.6 (1440×1024).
+   left 452, right 988, signal/title top 887, divider y927, lower controls y936. */
+.orbit-hud{position:absolute;left:452px;top:887px;width:536px;height:69px;text-align:left;opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s cubic-bezier(.16,1,.3,1);pointer-events:none}
+.orbit-explore.is-visible .orbit-hud{opacity:1;transform:translateY(0)}
+.orbit-hud-top{height:41px;display:flex;align-items:flex-start;gap:12px;border-bottom:0}
+/* Independent opaque divider: stays white after Reset, independent of WebGL scene brightness. */
+.orbit-hud-top::after{content:"";position:absolute;top:40px;left:0;width:100%;height:1px;background:#fff;opacity:1;z-index:4;pointer-events:none;mix-blend-mode:normal;backface-visibility:hidden}
+.orbit-hud-name{height:40px;line-height:35px;font-size:calc(30px * var(--orbit-type-adjust,1));letter-spacing:.022em;font-weight:600;text-align:left;white-space:nowrap;min-width:0;flex:1;overflow:hidden}
+/* Reference signal: EXACT 29×28 group (1:1), four descending bars left→right.
+   Activation retains right→left order independently of the heights. */
+.orbit-signal{width:29px;height:28px;flex:0 0 29px;display:flex;align-items:flex-end;gap:3px;margin:0}
+.orbit-signal i{display:block;width:5px;flex:0 0 5px;height:28px;background:rgb(109,111,116);border-radius:0;transition:background .22s ease,box-shadow .22s ease}
+.orbit-signal i:nth-child(2){height:22px}
+.orbit-signal i:nth-child(3){height:16px}
+.orbit-signal i:nth-child(4){height:10px}
+.orbit-signal i.is-lit{background:#fff;box-shadow:0 0 7px rgba(205,226,255,.18)}
+.orbit-hud-bar{position:relative;height:28px;color:#fff}
+.orbit-wheel-help{position:absolute;left:0;top:7px;font-size:calc(13.3px * var(--orbit-type-adjust,1));line-height:16px;letter-spacing:0;margin:0;white-space:nowrap;font-weight:450;animation:orbit-hint .8s ease-in-out infinite alternate}
+@keyframes orbit-hint{from{opacity:.62}to{opacity:1}}
+.orbit-reset{position:absolute;left:376px;top:8px;padding:0;pointer-events:auto;cursor:pointer;border:0;background:none;display:flex;align-items:center;gap:10px;color:inherit;font:500 calc(12px * var(--orbit-type-adjust,1))/20px var(--font-ko);white-space:nowrap}
+.orbit-reset img{display:block;width:20px;height:20px;object-fit:contain;flex:0 0 20px;transition:transform .25s ease}
+.orbit-reset span{display:inline-block;transform-origin:left center;transition:transform .2s ease}
+.orbit-reset:hover img,.orbit-reset:focus-visible img{transform:rotate(90deg)}
+.orbit-reset:hover span,.orbit-reset:focus-visible span{transform:scale(1.2)}
+.orbit-count{position:absolute;left:472px;top:8px;height:20px;display:flex;align-items:center;gap:8px;font-size:calc(18px * var(--orbit-type-adjust,1));line-height:20px;font-weight:560;white-space:nowrap}
+.orbit-count-icon{display:block;width:20px;height:20px;flex:0 0 20px}
+/* A PROFILE wheel-exit is an upward departure, without changing its approved layout. */
+.profile.orbit-is-exiting{opacity:0!important;transform:translateY(-94px);transition:opacity .8s ease,transform .8s cubic-bezier(.33,0,.67,1);pointer-events:none!important}
+@media(prefers-reduced-motion:reduce){.orbit-hud,.orbit-explore,.profile.orbit-is-exiting,.orbit-planet{transition-duration:.05s!important}.orbit-wheel-help{animation:none}}
+
+/* v1.37: distant-only, hairline constellation threads behind the points. */
+.orbit-constellation{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:0}
+.orbit-constellation-line{stroke:#fff;stroke-width:.6;stroke-linecap:round;opacity:0;vector-effect:non-scaling-stroke;transition:opacity .24s ease}
+/* Tight, crisp + diffraction ONLY for the distant-light state. */
+.orbit-planet.is-pinpoint .orbit-planet-glint{width:22px;height:22px;opacity:.96!important;filter:drop-shadow(0 0 1px rgba(229,244,255,.48))}
+.orbit-planet.is-pinpoint .orbit-planet-glint::before{height:1.2px;max-height:none;background:radial-gradient(ellipse at center,#fff 0%,rgba(249,252,255,.95) 10%,rgba(212,232,255,.65) 30%,rgba(165,203,255,.13) 67%,transparent 100%)}
+.orbit-planet.is-pinpoint .orbit-planet-glint::after{width:1.2px;max-width:none;background:radial-gradient(ellipse at center,#fff 0%,rgba(249,252,255,.95) 10%,rgba(212,232,255,.65) 30%,rgba(165,203,255,.13) 67%,transparent 100%)}
+.orbit-planet.is-pinpoint.is-red .orbit-planet-glint::before,.orbit-planet.is-pinpoint.is-red .orbit-planet-glint::after{background:radial-gradient(ellipse at center,#fff 0%,rgba(255,246,245,.96) 11%,rgba(255,209,207,.63) 33%,rgba(255,181,183,.12) 69%,transparent 100%)}
+
+/* v1.39 — one-time centered navigation hint, visual only. */
+.orbit-scroll-prompt{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(.965);font-size:calc(clamp(42px,4.6vw,68px) * var(--orbit-type-adjust,1));font-weight:300;letter-spacing:-.04em;white-space:nowrap;text-align:center;color:#f5f8ff;text-shadow:0 0 24px rgba(205,224,255,.24);opacity:0;z-index:18;pointer-events:none;transition:opacity .55s ease,transform .55s ease}
+.orbit-scroll-prompt.is-showing{opacity:1;transform:translate(-50%,-50%) scale(1)}
+@media(prefers-reduced-motion:reduce){.orbit-scroll-prompt{transition-duration:.08s}}
+
+/* v1.41 — one unified responsive plane with no per-character motion. */
+.orbit-scroll-prompt{perspective:1100px;transform:translate(-50%,-50%);font-weight:300;transition:opacity .55s ease;}
+.orbit-scroll-prompt.is-showing{transform:translate(-50%,-50%)}
+.orbit-scroll-prompt-plane{display:block;white-space:nowrap;transform-style:preserve-3d;
+  transform:translate3d(var(--orbit-prompt-tx,0px),var(--orbit-prompt-ty,0px),0)
+    rotateX(var(--orbit-prompt-rx,0deg)) rotateY(var(--orbit-prompt-ry,0deg)) scale(1);
+  backface-visibility:hidden;will-change:transform;
+  transition:transform .20s cubic-bezier(.22,.61,.36,1);}
+/* Continuous depth effect, no .is-pinpoint CSS swap when crossing 26.5k. */
+.orbit-planet-pinpoint{background:radial-gradient(circle,rgba(255,255,255,.98) 0%,rgba(243,251,255,.93) 27%,rgba(220,238,255,.62) 52%,rgba(177,216,255,.16) 78%,transparent 100%);
+  box-shadow:0 0 3px rgba(233,246,255,.42);transition:none}
+.orbit-planet-glint{opacity:calc(.48 * var(--orbit-ray-fade,1) + .96 * var(--orbit-far-glint,0));}
+.orbit-planet:hover .orbit-planet-glint,.orbit-planet:focus-visible .orbit-planet-glint{
+  opacity:calc(.80 * var(--orbit-ray-fade,1) + .98 * var(--orbit-far-glint,0));}
+/* One circular STROKE cursor across INTRO, PROFILE and EXPLORE. No hit blocking. */
+.orbit-stroke-cursor{position:fixed;left:0;top:0;width:22px;height:22px;border:1.3px solid rgba(250,253,255,.96);
+  border-radius:50%;box-sizing:border-box;background:transparent;pointer-events:none;
+  transform:translate3d(-50%,-50%,0) scale(1);
+  transition:transform .18s cubic-bezier(.2,.7,.2,1),opacity .22s ease;
+  opacity:0;z-index:2147483640;will-change:left,top,transform;
+  box-shadow:0 0 7px rgba(190,218,255,.13)}
+.orbit-stroke-cursor.is-visible{opacity:var(--orbit-prototype-cursor-opacity,1)}
+.orbit-stroke-cursor.is-pressed{transform:translate3d(-50%,-50%,0) scale(2)}
+@media(hover:hover) and (pointer:fine){html.orbit-cursor-enabled,html.orbit-cursor-enabled *{cursor:none!important}}
+@media(hover:none),(pointer:coarse){.orbit-stroke-cursor{display:none!important}}
+@media(prefers-reduced-motion:reduce){.orbit-scroll-prompt-plane{transition-duration:.06s}.orbit-stroke-cursor{transition-duration:.06s}}
+
+/* v1.46: the FINAL SATELLITE is not a seventh project. The existing
+   bottom Explore HUD physically withdraws at first satellite entry. */
+/* v1.49.8: HUD withdraws during the quicker p.13 -> p.15 satellite flight.
+   No new CONTACT label is injected; reverse restores the original HUD. */
+.orbit-explore.is-satellite .orbit-hud{opacity:0;transform:translateY(82px);pointer-events:none;
+  transition:opacity 1.80s cubic-bezier(.35,0,.68,1),transform 1.94s cubic-bezier(.42,0,.58,1)}
+/* The same HUD reappears during reverse flight; its earlier text/count are kept. */
+.orbit-explore.is-satellite.is-satellite-reversing .orbit-hud{opacity:1;transform:translateY(0);
+  transition:opacity 1.72s cubic-bezier(.32,0,.65,1),transform 1.90s cubic-bezier(.42,0,.58,1)}
+.orbit-explore.is-satellite .orbit-planet-labels,
+.orbit-explore.is-satellite .orbit-scroll-prompt{opacity:0;pointer-events:none;visibility:hidden}
+.orbit-explore.is-satellite .orbit-explore-heading{opacity:0;transition:opacity .5s}
+
+@media(prefers-reduced-motion:reduce){
+  .orbit-explore.is-satellite .orbit-hud,.orbit-explore.is-satellite.is-satellite-reversing .orbit-hud{transition-duration:.08s}
+}
+
+/* v1.48.2 — single-line adaptive HUD title, center-anchored reset hover. */
+.orbit-hud-name{white-space:nowrap;overflow:visible;text-overflow:clip;max-width:100%;font-size:calc(30px * var(--orbit-type-adjust,1))}
+.orbit-reset span{transform-origin:center center}
+.orbit-count{transform-origin:center center}
+.orbit-count.is-count-bump{animation:orbit-visit-bump .65s cubic-bezier(.2,.75,.2,1) both}
+/* Keep the original icon/type color and use only a restrained scale pulse. */
+@keyframes orbit-visit-bump{
+  0%{transform:scale(1)}
+  22%{transform:scale(1.10)}
+  55%{transform:scale(1.035)}
+  100%{transform:scale(1)}
+}
+@media(prefers-reduced-motion:reduce){.orbit-count.is-count-bump{animation-duration:.08s}}
+.orbit-planet:active{cursor:grabbing}
+
+/* v1.48.8 — project thumbnail follows the pointer; no interaction capture.
+   This preview uses the existing ASSET_V1 images and has no invented text. */
+.orbit-planet-preview{
+  position:fixed;left:0;top:0;width:226px;height:142px;z-index:2147483635;
+  border:1px solid rgba(204,226,255,.48);border-radius:9px;
+  background:#121624;box-shadow:0 16px 42px rgba(0,0,0,.43),0 0 24px rgba(109,161,255,.10);
+  overflow:hidden;opacity:0;transform:translate3d(0,5px,0) scale(.975);
+  transition:opacity .43s ease,transform .43s cubic-bezier(.22,1,.36,1),visibility 0s linear .43s;
+  pointer-events:none;visibility:hidden;
+}
+.orbit-planet-preview.is-visible{opacity:1;visibility:visible;transform:translate3d(0,0,0) scale(1);
+  transition:opacity .43s ease,transform .43s cubic-bezier(.22,1,.36,1),visibility 0s}
+.orbit-planet-preview img{display:block;width:100%;height:100%;object-fit:cover}
+@media (hover:none),(pointer:coarse){.orbit-planet-preview{display:none!important}}
+@media (prefers-reduced-motion:reduce){.orbit-planet-preview{transition-duration:.08s}}
+
+/* v1.49.0 — an open DETAIL keeps the focused globe at constant apparent size.
+   The planet remains draggable; only decorative hover magnification is suppressed. */
+.orbit-explore.has-project-detail .orbit-planet:hover .orbit-planet-halo,
+.orbit-explore.has-project-detail .orbit-planet:focus-visible .orbit-planet-halo{
+  opacity:calc(.525 * var(--orbit-ray-fade,1));filter:blur(1.3px);
+}
+.orbit-explore.has-project-detail .orbit-planet:hover .orbit-planet-glint,
+.orbit-explore.has-project-detail .orbit-planet:focus-visible .orbit-planet-glint{
+  opacity:calc(.48 * var(--orbit-ray-fade,1) + .96 * var(--orbit-far-glint,0));
+  filter:drop-shadow(0 0 2px rgba(149,204,255,.16));
+}

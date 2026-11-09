@@ -1,0 +1,155 @@
+/* BUGS! PROBLEM — isolated, storyboard-driven motion; only BUGS detail. */
+.orbit-bugs-problem-animated {
+  position:relative; width:100%; max-width:218px; aspect-ratio:1450/2936;
+  margin:0 auto; overflow:visible; isolation:isolate; flex-shrink:0;
+  user-select:none; pointer-events:none;
+}
+.orbit-bugs-problem-screen {
+  position:absolute;left:5.52%;top:7.32%;width:88.96%;height:90.15%;
+  overflow:hidden;background:#070a10;border-radius:7% / 4%;z-index:1;
+}
+.orbit-bugs-problem-player, .orbit-bugs-problem-playlist,
+.orbit-bugs-problem-playlist-content {position:absolute;inset:0;width:100%;height:100%}
+.orbit-bugs-problem-player img,.orbit-bugs-problem-playlist-content img {
+  display:block;width:100%;height:100%;object-fit:cover;object-position:50% 50%;
+  -webkit-user-drag:none;
+}
+.orbit-bugs-problem-playlist {z-index:2;background:#fff;transform:translate3d(0,105%,0);
+  transition:transform .68s cubic-bezier(.25,.83,.27,1);will-change:transform;overflow:hidden}
+.orbit-bugs-problem-playlist-content {transform-origin:top left;
+  transition:transform .91s cubic-bezier(.24,.72,.24,1);will-change:transform}
+.orbit-bugs-problem-annotation {position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.orbit-bugs-problem-zone {z-index:2;opacity:0;transition:opacity .38s ease}
+.orbit-bugs-problem-zone .dead-outline {fill:none;stroke:#ff747e;stroke-width:1.4;
+  stroke-dasharray:2.2 1.7;vector-effect:non-scaling-stroke}
+.orbit-bugs-problem-zone .thumb-outline {fill:none;stroke:#58ef61;stroke-width:1.5;
+  stroke-dasharray:2.2 1.7;vector-effect:non-scaling-stroke}
+.orbit-bugs-problem-zone .zone-dead-label {fill:#ff747e;font-size:calc(4px * var(--orbit-type-adjust,1));font-family:Arial,sans-serif;font-weight:700}
+.orbit-bugs-problem-zone .zone-thumb-label {fill:#58ef61;font-size:calc(4px * var(--orbit-type-adjust,1));font-family:Arial,sans-serif;font-weight:700}
+.orbit-bugs-problem-control {z-index:3;opacity:0;transition:opacity .35s ease}
+.orbit-bugs-problem-control rect {fill:rgba(255,255,255,.045);stroke:#e8edf3;stroke-width:1.1;
+  stroke-dasharray:2 1.4;vector-effect:non-scaling-stroke}
+.orbit-bugs-problem-playlist-mark {opacity:0;transition:opacity .35s ease}
+.orbit-bugs-problem-playlist-mark circle.ring {fill:rgba(255,88,92,.07);stroke:#ff555b;stroke-width:2.2;stroke-dasharray:52;stroke-dashoffset:52;
+  vector-effect:non-scaling-stroke}
+.orbit-bugs-problem-playlist-mark .issue-num {fill:#fff;font:700 calc(5.5px * var(--orbit-type-adjust,1)) Arial,sans-serif;text-anchor:middle;dominant-baseline:middle}
+.orbit-bugs-problem-player .issue-num, .orbit-bugs-problem-player .issue-bg {opacity:0;transition:opacity .38s ease}
+.orbit-bugs-problem-player .issue-bg {fill:#ff554e}
+.orbit-bugs-problem-player .issue-num {fill:white;font:700 calc(5.5px * var(--orbit-type-adjust,1)) Arial,sans-serif;text-anchor:middle;dominant-baseline:middle}
+.orbit-bugs-problem-frame{position:absolute;inset:0;width:100%;height:100%;z-index:5;
+  object-fit:fill;pointer-events:none;user-select:none}
+.orbit-bugs-problem-animated[data-bugs-stage="zone"] .orbit-bugs-problem-zone {opacity:1;animation:bugs-zone-pulse 1.65s ease-in-out infinite alternate}
+.orbit-bugs-problem-animated[data-bugs-stage="zone"] .orbit-bugs-problem-player .issue-01{opacity:1}
+.orbit-bugs-problem-animated[data-bugs-stage="playlist-in"] .orbit-bugs-problem-playlist,
+.orbit-bugs-problem-animated[data-bugs-stage="zoom"] .orbit-bugs-problem-playlist,
+.orbit-bugs-problem-animated[data-bugs-stage="unzoom"] .orbit-bugs-problem-playlist {transform:translate3d(0,0,0)}
+/* Actual indicator in supplied list screenshot: the 'luther' row near x=82%, y=22%. */
+.orbit-bugs-problem-animated[data-bugs-stage="zoom"] .orbit-bugs-problem-playlist-content {
+ transform:translate3d(-136.8%,-10.8%,0) scale(2.4)
+}
+.orbit-bugs-problem-animated[data-bugs-stage="zoom"] .orbit-bugs-problem-playlist-mark {opacity:1;transition-delay:.85s}
+.orbit-bugs-problem-animated[data-bugs-stage="zoom"] .orbit-bugs-problem-playlist-mark circle.ring {
+ animation:bugs-mark-draw .62s ease forwards .89s
+}
+.orbit-bugs-problem-animated[data-bugs-stage="controls"] .orbit-bugs-problem-control {opacity:1}
+.orbit-bugs-problem-animated[data-bugs-stage="controls"] .orbit-bugs-problem-player .issue-03 {opacity:1}
+.orbit-bugs-problem-animated[data-bugs-stage="controls"] .orbit-bugs-problem-control rect {animation:bugs-controls-draw .72s ease both}
+@keyframes bugs-zone-pulse {from {opacity:.5;filter:brightness(.8)}to{opacity:1;filter:brightness(1.2)}}
+@keyframes bugs-mark-draw {from{stroke-dashoffset:52}to{stroke-dashoffset:0}}
+@keyframes bugs-controls-draw {from{stroke-dasharray:0 250}to{stroke-dasharray:2 1.4}}
+/* Never change the non-BUGS modal's layout. Preserve the surrounding ISSUE text. */
+.orbit-detail-section[data-section="problem"].has-bugs-problem-animation .orbit-bugs-problem-host {min-width:0;display:flex;align-items:center;justify-content:center}
+.orbit-detail-section[data-section="problem"].has-bugs-problem-animation .orbit-bugs-problem-animated {margin-inline:auto}
+.orbit-detail-section[data-section="problem"].has-bugs-problem-animation .orbit-detail-issue-list article.bugs-issue-active,
+.orbit-detail-section[data-section="problem"].has-bugs-problem-animation .orbit-detail-problem-issues article.bugs-issue-active {filter:brightness(1.35);transition:filter .35s}
+@media(prefers-reduced-motion:reduce){
+ .orbit-bugs-problem-zone,.orbit-bugs-problem-control,.orbit-bugs-problem-playlist-mark,
+ .orbit-bugs-problem-playlist,.orbit-bugs-problem-playlist-content {animation:none!important;transition-duration:.01ms!important}
+}
+.orbit-detail-section[data-section="problem"].has-bugs-problem-animation .orbit-detail-problem-grid {
+  grid-template-columns:210px minmax(0,1fr);gap:20px;align-items:center;
+}
+.orbit-bugs-problem-animated {max-width:196px}
+.orbit-bugs-problem-animated[data-bugs-stage="zone"] .orbit-bugs-problem-player .issue-01 .issue-num,
+.orbit-bugs-problem-animated[data-bugs-stage="zone"] .orbit-bugs-problem-player .issue-01 .issue-bg,
+.orbit-bugs-problem-animated[data-bugs-stage="controls"] .orbit-bugs-problem-player .issue-03 .issue-num,
+.orbit-bugs-problem-animated[data-bugs-stage="controls"] .orbit-bugs-problem-player .issue-03 .issue-bg {opacity:1}
+@media(max-width:550px){.orbit-detail-section[data-section="problem"].has-bugs-problem-animation .orbit-detail-problem-grid {grid-template-columns:1fr;gap:12px}}
+
+/* v1.50.4: match the actual v1.50.3 PROBLEM split without changing any other project. */
+.orbit-project-detail[data-project="bugs"] .orbit-detail-section[data-section="problem"].has-bugs-problem-animation .orbit-detail-split{
+  grid-template-columns:252px minmax(0,1fr);gap:20px;align-items:start;
+}
+.orbit-project-detail[data-project="bugs"] .orbit-detail-section[data-section="problem"].has-bugs-problem-animation .orbit-detail-media--problem{
+  display:flex;align-items:center;justify-content:center;min-width:0;overflow:visible;
+}
+.orbit-project-detail[data-project="bugs"] .orbit-detail-issues article.bugs-issue-active{
+  filter:brightness(1.22);transition:filter .35s ease;
+}
+
+/* v1.50.5 — BUGS-only rhythm fix. The increased ISSUE body size from v1.50.3
+   stays 15px. Compact its leading/gaps to restore the approved 707px chapter
+   span, so INSIGHT/SOLUTION/RESULT keep their previous vertical positions.
+   Scope by data-project rather than the late-added animation class: section
+   offsets stay stable before/after the phone component mounts. */
+.orbit-project-detail[data-project="bugs"] .orbit-detail-section[data-section="problem"]{
+  min-height:707px;
+}
+.orbit-project-detail[data-project="bugs"] .orbit-detail-section[data-section="problem"] .orbit-detail-issues{
+  gap:12px;
+}
+.orbit-project-detail[data-project="bugs"] .orbit-detail-section[data-section="problem"] .orbit-detail-issues article h4{
+  margin:3px 0 7px;
+}
+.orbit-project-detail[data-project="bugs"] .orbit-detail-section[data-section="problem"] .orbit-detail-issues article p{
+  line-height:1.32;
+}
+.orbit-project-detail[data-project="bugs"] .orbit-detail-section[data-section="problem"] .orbit-detail-key-insight{
+  top:628px;
+}
+
+/* v1.50.14 — left-align the original 196px animated phone with the 52.5px
+   content guideline. The media track and ISSUE positions are not resized. */
+.orbit-project-detail[data-project="bugs"] .orbit-detail-section[data-section="problem"].has-bugs-problem-animation .orbit-detail-media--problem{
+  justify-content:flex-start;
+}
+.orbit-project-detail[data-project="bugs"] .orbit-detail-section[data-section="problem"].has-bugs-problem-animation .orbit-bugs-problem-animated{
+  margin-left:0;margin-right:auto;
+}
+/* Playback at 80% speed: each transition, pulse and drawn annotation takes
+   1 / .8 = 1.25 times as long as before. Stage timers are scaled in JS. */
+.orbit-bugs-problem-playlist{transition-duration:.85s}
+.orbit-bugs-problem-playlist-content{transition-duration:1.1375s}
+.orbit-bugs-problem-zone{transition-duration:.475s}
+.orbit-bugs-problem-control,.orbit-bugs-problem-playlist-mark{transition-duration:.4375s}
+.orbit-bugs-problem-player .issue-num,.orbit-bugs-problem-player .issue-bg{transition-duration:.475s}
+.orbit-bugs-problem-animated[data-bugs-stage="zone"] .orbit-bugs-problem-zone{animation-duration:2.0625s}
+.orbit-bugs-problem-animated[data-bugs-stage="zoom"] .orbit-bugs-problem-playlist-mark{transition-delay:1.0625s}
+.orbit-bugs-problem-animated[data-bugs-stage="zoom"] .orbit-bugs-problem-playlist-mark circle.ring{animation-duration:.775s;animation-delay:1.1125s}
+.orbit-bugs-problem-animated[data-bugs-stage="controls"] .orbit-bugs-problem-control rect{animation-duration:.9s}
+@media(prefers-reduced-motion:reduce){
+ .orbit-bugs-problem-zone,.orbit-bugs-problem-control,.orbit-bugs-problem-playlist-mark,
+ .orbit-bugs-problem-playlist,.orbit-bugs-problem-playlist-content{transition-duration:.01ms!important;animation-duration:.01ms!important}
+}
+
+/* v1.50.74 — BUGS: NAVER-style context caption inside the actual phone viewport. */
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-problem-screen .orbit-problem-film-caption{
+  position:absolute;left:0;right:0;bottom:0;z-index:4;height:29px;display:flex;
+  align-items:center;box-sizing:border-box;padding:0 8px;
+  background:linear-gradient(90deg,rgba(5,13,29,.95),rgba(5,13,29,.85));
+  color:#eef4ff;font-size:calc(9px * var(--orbit-type-adjust,1));font-weight:600;letter-spacing:-.04em;
+  white-space:nowrap;pointer-events:none;
+}
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-film-caption span{display:none}
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-problem-animated[data-bugs-stage="zone"] .cap-1,
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-problem-animated:is([data-bugs-stage="playlist-in"],[data-bugs-stage="zoom"],[data-bugs-stage="unzoom"],[data-bugs-stage="playlist-out"]) .cap-2,
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-problem-animated[data-bugs-stage="controls"] .cap-3{display:block}
+/* Remove the previous ISSUE emphasis effect without affecting copy or animation. */
+.orbit-project-detail[data-project="bugs"] .orbit-detail-section[data-section="problem"] .orbit-detail-issues article.bugs-issue-active,
+.orbit-project-detail[data-project="bugs"] .orbit-detail-section[data-section="problem"] .orbit-detail-issue-list article.bugs-issue-active,
+.orbit-project-detail[data-project="bugs"] .orbit-detail-section[data-section="problem"] .orbit-detail-problem-issues article.bugs-issue-active{filter:none!important;text-shadow:none!important}
+
+/* v1.50.76 — BUGS phone caption background 60% opaque, text remains fully opaque. */
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-problem-screen .orbit-problem-film-caption {
+  background:linear-gradient(90deg,rgba(5,13,29,.60),rgba(5,13,29,.60));
+}
