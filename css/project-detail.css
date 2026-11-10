@@ -2880,3 +2880,59 @@ html.orbit-problem-native-cursor .orbit-stroke-cursor{visibility:hidden!importan
 /* v1.50.140: original-resolution viewer for still PROBLEM photographs. */
 .orbit-project-detail .orbit-detail-section[data-section="problem"] img.orbit-problem-zoomable{cursor:zoom-in}
 .orbit-project-detail .orbit-detail-section[data-section="problem"] img.orbit-problem-zoomable:focus-visible{outline:2px solid #739DF8;outline-offset:2px}
+
+
+/* v1.50.142 — HD image loading feedback in the EXISTING photo lightbox.
+   The preview thumbnails remain WebP; the full-screen img stays the original.
+   Overlay is viewport-centered (not subject to image zoom/pan) and does not
+   change DETAIL layout, chapter spacing or gallery navigation positions. */
+.orbit-detail-lightbox .orbit-lightbox-loading{
+  position:absolute;left:50%;top:50%;z-index:3;
+  transform:translate(-50%,-50%);box-sizing:border-box;
+  display:flex;align-items:center;flex-direction:column;justify-content:center;
+  gap:10px;width:max-content;max-width:calc(100vw - 48px);
+  text-align:center;pointer-events:none;opacity:1;
+  transition:opacity .3s ease;
+  font-family:var(--font-ko,Pretendard,sans-serif);
+  color:#fff;
+}
+.orbit-detail-lightbox .orbit-lightbox-loading[hidden]{display:none!important}
+.orbit-detail-lightbox .orbit-lightbox-loading.is-leaving{opacity:0}
+.orbit-detail-lightbox .orbit-lightbox-loading-ring{
+  width:46px;height:46px;margin-bottom:8px;box-sizing:border-box;
+  border:3px solid rgba(156,187,244,.2);
+  border-top-color:#a5c7ff;border-right-color:#739df8;
+  border-radius:50%;animation:orbit-lightbox-loading-spin .85s linear infinite;
+  filter:drop-shadow(0 0 8px rgba(115,157,248,.22));
+}
+.orbit-detail-lightbox .orbit-lightbox-loading-title{
+  font-size:calc(15px * var(--orbit-type-adjust,1));
+  font-weight:650;line-height:1.4;letter-spacing:.01em;
+  color:#ebeFF9;
+}
+.orbit-detail-lightbox .orbit-lightbox-loading-subtitle{
+  font-size:calc(12px * var(--orbit-type-adjust,1));
+  line-height:1.45;font-weight:400;color:#9da7bd;
+}
+.orbit-detail-lightbox .orbit-lightbox-loading.is-error .orbit-lightbox-loading-ring{
+  animation:none;border-color:rgba(167,178,204,.35);
+  border-top-color:#739df8;
+}
+.orbit-detail-lightbox .orbit-lightbox-loading-retry{
+  margin-top:7px;padding:8px 17px;pointer-events:auto;
+  border:1px solid rgba(157,180,220,.5);border-radius:7px;
+  color:#fff;background:rgba(18,30,54,.85);
+  cursor:pointer;font:inherit;font-size:calc(13px * var(--orbit-type-adjust,1));
+  transition:background .2s ease,border-color .2s ease;
+}
+.orbit-detail-lightbox .orbit-lightbox-loading-retry[hidden]{display:none!important}
+.orbit-detail-lightbox .orbit-lightbox-loading-retry:hover,
+.orbit-detail-lightbox .orbit-lightbox-loading-retry:focus-visible{
+  background:rgba(41,65,112,.95);border-color:#a5c7ff;
+}
+@keyframes orbit-lightbox-loading-spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){
+  .orbit-detail-lightbox .orbit-lightbox-loading,
+  .orbit-detail-lightbox .orbit-lightbox-loading-retry{transition:none!important}
+  .orbit-detail-lightbox .orbit-lightbox-loading-ring{animation:none!important}
+}

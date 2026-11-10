@@ -903,6 +903,12 @@
   </div><div class="orbit-lightbox-surface" aria-label="확대 이미지 영역">
     <img class="orbit-lightbox-image" alt="" draggable="false">
   </div>
+  <div class="orbit-lightbox-loading" role="status" aria-live="polite" aria-atomic="true" hidden>
+    <span class="orbit-lightbox-loading-ring" aria-hidden="true"></span>
+    <strong class="orbit-lightbox-loading-title">고화질 이미지 불러오는 중</strong>
+    <span class="orbit-lightbox-loading-subtitle">원본 이미지를 준비하고 있습니다.</span>
+    <button class="orbit-lightbox-loading-retry" type="button" hidden>다시 시도</button>
+  </div>
   <button class="orbit-lightbox-edge orbit-lightbox-edge--prev" type="button" aria-label="같은 섹션의 이전 이미지" title="이전 이미지" hidden><span aria-hidden="true"></span></button>
   <button class="orbit-lightbox-edge orbit-lightbox-edge--next" type="button" aria-label="같은 섹션의 다음 이미지" title="다음 이미지" hidden><span aria-hidden="true"></span></button>`;
   document.body.append(lightbox);
@@ -915,6 +921,37 @@
   const zoomIn=lightbox.querySelector('.orbit-lightbox-zoom-in');
   const previousImage=lightbox.querySelector('.orbit-lightbox-edge--prev');
   const nextImage=lightbox.querySelector('.orbit-lightbox-edge--next');
+  const loadingIndicator=lightbox.querySelector('.orbit-lightbox-loading');
+  const loadingTitle=lightbox.querySelector('.orbit-lightbox-loading-title');
+  const loadingSubtitle=lightbox.querySelector('.orbit-lightbox-loading-subtitle');
+  const loadingRetry=lightbox.querySelector('.orbit-lightbox-loading-retry');
+  let loadingHideTimer=0;
+  function setImageLoading(state){
+    clearTimeout(loadingHideTimer);loadingHideTimer=0;
+    if(state==='hidden'){
+      loadingIndicator.hidden=true;
+      loadingIndicator.classList.remove('is-leaving','is-error');
+      return;
+    }
+    loadingIndicator.hidden=false;
+    loadingIndicator.classList.toggle('is-error',state==='error');
+    loadingRetry.hidden=state!=='error';
+    loadingTitle.textContent=state==='error'?'이미지를 불러오지 못했습니다':'고화질 이미지 불러오는 중';
+    loadingSubtitle.textContent=state==='error'?'네트워크 상태를 확인하고 다시 시도해 주세요.':'원본 이미지를 준비하고 있습니다.';
+    if(state==='ready'){
+      loadingIndicator.classList.add('is-leaving');
+      loadingHideTimer=setTimeout(()=>{
+        loadingIndicator.hidden=true;
+        loadingIndicator.classList.remove('is-leaving');
+        loadingHideTimer=0;
+      },350);
+    }else{
+      loadingIndicator.classList.remove('is-leaving');
+    }
+  }
+  loadingRetry.addEventListener('click',()=>{
+    if(!lightbox.hidden && galleryImages[galleryIndex])loadGalleryImage(galleryImages[galleryIndex]);
+  });
   let galleryImages=[], galleryIndex=0, gallerySection="";
   let gallerySliding=false, gallerySlideSession=0;
   let restoreFocus=null, lightboxCloseTimer=null, lightboxOpenToken=0;
@@ -973,6 +1010,8 @@
     if(lightbox.hidden)return;
     ++gallerySlideSession;gallerySliding=false;clearGallerySlide();
     ++lightboxOpenToken;
+    setImageLoading('hidden');
+    lightboxImage.onload=lightboxImage.onerror=null;
     galleryImages=[];galleryIndex=0;
     panPointer=null;spaceHeld=false;
     lightbox.classList.remove('is-open','is-panning','is-space-held');
@@ -1394,28 +1433,55 @@
     zoom=1;panX=panY=0;panPointer=null;
     lightbox.classList.remove('is-panning');
     lightboxImage.alt=img.alt||'이미지 상세보기';
+    // The initial viewer is empty until the HD original is decoded. Keep a
+    // centered progress indicator visible throughout that actual wait.
+    // During a gallery slide, the decoded incoming frame remains onscreen.
+    if(!handoff)setImageLoading('loading');
     let handled=false;
-    const ready=()=>{
+    const ready=async()=>{
       if(handled || token!==lightboxOpenToken)return;
       handled=true;
-      // v1.50.125: keep the animated incoming frame in place until the live
-      // image is fully opaque and has painted. Previous code cleared the frame
-      // as the live image began a 350ms fade, causing a visible blink.
+      // onload can fire before a large PNG finishes decoding. Do not remove
+      // the spinner until the full image is ready for the next paint.
+      try{if(lightboxImage.decode)await lightboxImage.decode();}catch(_err){}
+      if(token!==lightboxOpenToken || lightbox.hidden)return;
+      if(!lightboxImage.naturalWidth){
+        lightboxImage.style.opacity='0';
+        setImageLoading('error');
+        if(handoff)onReady();
+        return;
+      }
+      // Preserve the already-animated incoming frame until the real image
+      // is ready, avoiding the flashing observed in previous gallery versions.
       if(handoff)lightboxImage.style.transition='none';
       updateBaseWidth();
-      lightboxImage.style.opacity=handoff?'1':'';
+      lightboxImage.style.opacity='1';
       if(handoff){
         requestAnimationFrame(()=>requestAnimationFrame(()=>{
           if(token!==lightboxOpenToken || lightbox.hidden)return;
           onReady();
         }));
+      }else{
+        requestAnimationFrame(()=>{
+          if(token===lightboxOpenToken && !lightbox.hidden)setImageLoading('ready');
+        });
       }
+    };
+    const failed=()=>{
+      if(token!==lightboxOpenToken || lightbox.hidden)return;
+      handled=true;
+      lightboxImage.style.opacity='0';
+      setImageLoading('error');
+      if(handoff){onReady();lightboxImage.style.opacity='0';}
     };
     lightboxImage.style.opacity='0';
     lightboxImage.onload=ready;
-    lightboxImage.onerror=ready;
+    lightboxImage.onerror=failed;
     lightboxImage.src=detailOriginalSource(img);
-    if(lightboxImage.complete && lightboxImage.naturalWidth)ready();
+    if(lightboxImage.complete){
+      if(lightboxImage.naturalWidth)ready();
+      else if(lightboxImage.currentSrc)failed();
+    }
     paintViewer();syncGalleryArrows();
   }
   async function slideGalleryImage(direction,nextIndex){
@@ -1503,6 +1569,7 @@
     galleryIndex=Math.max(0,galleryImages.indexOf(img));
     gallerySection=img.closest('.orbit-detail-section')?.dataset.section||'';
     ++gallerySlideSession;gallerySliding=false;clearGallerySlide();
+    setImageLoading('hidden');
     spaceHeld=false;panPointer=null;
     lightbox.hidden=false;lightbox.classList.remove('is-open','is-panning','is-space-held');
     loadGalleryImage(img);
