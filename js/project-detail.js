@@ -348,6 +348,33 @@
       </div>`).join('')}
     </div>`;
   }
+  // v1.50.140 — PROBLEM / INSIGHT / RESULT: thumbnails load separately
+  // from untouched high-resolution originals. The preview folder mirrors
+  // the ASSET project paths; OVERVIEW and SOLUTION remain unchanged.
+  const detailPreviewSrc = (original) => {
+    if(!/^ASSET\/05_MODAL_[^?#]+\.(?:png|jpe?g)$/i.test(original||''))return null;
+    return original.replace(/^ASSET\//,'ASSET/_PREVIEW/').replace(/\.(?:png|jpe?g)$/i,'.webp');
+  };
+  function prepareDetailPreviews(fragment,keepBugsLegacy=false){
+    fragment.querySelectorAll('[data-section="problem"] img,[data-section="insight"] img,[data-section="final"] img').forEach(img=>{
+      if(img.hasAttribute('data-orbit-original'))return;
+      const original=img.getAttribute('src');
+      // BUGS storyboard locates the two original problem images by filename
+      // before it swaps the static slot for its own animated film.
+      if(keepBugsLegacy && /02_01B_PROBLEM_0[12]\.png$/i.test(original||''))return;
+      const preview=detailPreviewSrc(original);
+      if(!preview)return;
+      img.setAttribute('data-orbit-original',original);
+      // v1.50.141: fail open if a preview was omitted by a host/build or
+      // cannot be decoded. The full-resolution source is always preserved.
+      img.addEventListener('error',function restoreDetailOriginal(){
+        if(img.getAttribute('src')===preview)img.setAttribute('src',original);
+      },{once:true});
+      img.setAttribute('src',preview);
+    });
+  }
+  const detailOriginalSource=img=>img?.getAttribute('data-orbit-original')||img?.currentSrc||img?.src||'';
+
   function render(item) {
     stopSevenLogoAuto();
     const meta = item.media;
@@ -462,7 +489,12 @@
     const solution = section('solution','SOLUTION',`<div class="orbit-detail-kicker">SOLUTION</div><div class="orbit-detail-solution-grid${prototypeKind?' orbit-detail-solution-grid--prototype orbit-detail-solution-grid--'+prototypeKind:''}">${solutionMedia}<div class="orbit-detail-solution-points">${solutionGroups}</div></div>`);
     const finalHeading=item.key==='seven'?'VISUAL APPLICATION':'FINAL DESIGN';
     const final = section('final',finalHeading,`<div class="orbit-detail-kicker">${finalHeading}</div>${media(meta.final,item.title+' 최종 결과물','final',item.key)}`);
-    scroll.innerHTML = overview + problem + insight + solution + final;
+    // Rewrite image URLs while the markup is DETACHED: the browser never
+    // starts downloading full-resolution previews only to cancel them.
+    const detailMarkup=document.createElement('template');
+    detailMarkup.innerHTML=overview+problem+insight+solution+final;
+    prepareDetailPreviews(detailMarkup.content,item.key==='bugs');
+    scroll.replaceChildren(detailMarkup.content);
     // v1.50.105: every genuine INSIGHT image (analysis, evidence and comparison)
     // opens the same viewer as BENCHMARK and RESULT. Do not create a new viewer.
     scroll.querySelectorAll('.orbit-detail-section[data-section="insight"] img').forEach(img=>{
@@ -471,6 +503,15 @@
       img.setAttribute('role','button');
       img.setAttribute('tabindex','0');
       img.setAttribute('aria-label',(img.alt||'분석 이미지')+' 크게 보기');
+    });
+    // Other PROBLEM projects show a still-image comparison instead of a
+    // looping film. Use the same full-resolution lightbox for those figures.
+    scroll.querySelectorAll('.orbit-detail-section[data-section="problem"] .orbit-detail-media--problem img').forEach(img=>{
+      if(img.closest('.orbit-bugs-problem-animated,.orbit-naver-problem-film,.orbit-aladin-problem-film,.orbit-cave-problem-film,.orbit-gta-planning-film'))return;
+      img.classList.add('orbit-problem-zoomable');
+      img.setAttribute('role','button');
+      img.setAttribute('tabindex','0');
+      img.setAttribute('aria-label',(img.alt||'문제 분석 이미지')+' 크게 보기');
     });
     // v1.50.97: preserve 9.9px type, +1.5px horizontal pill padding, 5px gaps.
     // Show 4 tags only when they genuinely fit inside the 216px marked region;
@@ -862,6 +903,12 @@
   </div><div class="orbit-lightbox-surface" aria-label="확대 이미지 영역">
     <img class="orbit-lightbox-image" alt="" draggable="false">
   </div>
+  <div class="orbit-lightbox-loading" role="status" aria-live="polite" aria-atomic="true" hidden>
+    <span class="orbit-lightbox-loading-ring" aria-hidden="true"></span>
+    <strong class="orbit-lightbox-loading-title">고화질 이미지 불러오는 중</strong>
+    <span class="orbit-lightbox-loading-subtitle">원본 이미지를 준비하고 있습니다.</span>
+    <button class="orbit-lightbox-loading-retry" type="button" hidden>다시 시도</button>
+  </div>
   <button class="orbit-lightbox-edge orbit-lightbox-edge--prev" type="button" aria-label="같은 섹션의 이전 이미지" title="이전 이미지" hidden><span aria-hidden="true"></span></button>
   <button class="orbit-lightbox-edge orbit-lightbox-edge--next" type="button" aria-label="같은 섹션의 다음 이미지" title="다음 이미지" hidden><span aria-hidden="true"></span></button>`;
   document.body.append(lightbox);
@@ -874,6 +921,37 @@
   const zoomIn=lightbox.querySelector('.orbit-lightbox-zoom-in');
   const previousImage=lightbox.querySelector('.orbit-lightbox-edge--prev');
   const nextImage=lightbox.querySelector('.orbit-lightbox-edge--next');
+  const loadingIndicator=lightbox.querySelector('.orbit-lightbox-loading');
+  const loadingTitle=lightbox.querySelector('.orbit-lightbox-loading-title');
+  const loadingSubtitle=lightbox.querySelector('.orbit-lightbox-loading-subtitle');
+  const loadingRetry=lightbox.querySelector('.orbit-lightbox-loading-retry');
+  let loadingHideTimer=0;
+  function setImageLoading(state){
+    clearTimeout(loadingHideTimer);loadingHideTimer=0;
+    if(state==='hidden'){
+      loadingIndicator.hidden=true;
+      loadingIndicator.classList.remove('is-leaving','is-error');
+      return;
+    }
+    loadingIndicator.hidden=false;
+    loadingIndicator.classList.toggle('is-error',state==='error');
+    loadingRetry.hidden=state!=='error';
+    loadingTitle.textContent=state==='error'?'이미지를 불러오지 못했습니다':'고화질 이미지 불러오는 중';
+    loadingSubtitle.textContent=state==='error'?'네트워크 상태를 확인하고 다시 시도해 주세요.':'원본 이미지를 준비하고 있습니다.';
+    if(state==='ready'){
+      loadingIndicator.classList.add('is-leaving');
+      loadingHideTimer=setTimeout(()=>{
+        loadingIndicator.hidden=true;
+        loadingIndicator.classList.remove('is-leaving');
+        loadingHideTimer=0;
+      },350);
+    }else{
+      loadingIndicator.classList.remove('is-leaving');
+    }
+  }
+  loadingRetry.addEventListener('click',()=>{
+    if(!lightbox.hidden && galleryImages[galleryIndex])loadGalleryImage(galleryImages[galleryIndex]);
+  });
   let galleryImages=[], galleryIndex=0, gallerySection="";
   let gallerySliding=false, gallerySlideSession=0;
   let restoreFocus=null, lightboxCloseTimer=null, lightboxOpenToken=0;
@@ -932,6 +1010,8 @@
     if(lightbox.hidden)return;
     ++gallerySlideSession;gallerySliding=false;clearGallerySlide();
     ++lightboxOpenToken;
+    setImageLoading('hidden');
+    lightboxImage.onload=lightboxImage.onerror=null;
     galleryImages=[];galleryIndex=0;
     panPointer=null;spaceHeld=false;
     lightbox.classList.remove('is-open','is-panning','is-space-held');
@@ -1161,6 +1241,21 @@
     const split=document.createElement('div');split.className='orbit-detail-split';
     const media=document.createElement('div');media.className='orbit-detail-media orbit-detail-media--problem';
     liveCopy=source.cloneNode(true);
+    // Keep preview frames on screen until each high-res frame is decoded;
+    // swapping src on an undecoded PNG could otherwise flash an empty phone.
+    const enlargedCopy=liveCopy;
+    enlargedCopy.querySelectorAll('img[data-orbit-original]').forEach(img=>{
+      const original=img.getAttribute('data-orbit-original');
+      if(!original)return;
+      const highRes=new Image();
+      highRes.src=original;
+      const promote=()=>{
+        if(liveCopy!==enlargedCopy || !img.isConnected || problemViewer.hidden)return;
+        img.src=original;
+      };
+      if(highRes.decode)highRes.decode().then(promote).catch(()=>{});
+      else highRes.onload=promote;
+    });
     media.append(liveCopy);split.append(media);section.append(split);holder.append(section);
     liveFrame=document.createElement('div');liveFrame.className='orbit-problem-live-film-frame';
     liveFrame.style.width=liveFrameWidth+'px';liveFrame.style.height=liveFrameHeight+'px';
@@ -1310,6 +1405,9 @@
     if(section.dataset.section==='insight'){
       return [...section.querySelectorAll('img.orbit-insight-zoomable')];
     }
+    if(section.dataset.section==='problem'){
+      return [...section.querySelectorAll('img.orbit-problem-zoomable')];
+    }
     return [img];
   }
   function syncGalleryArrows(){
@@ -1335,28 +1433,55 @@
     zoom=1;panX=panY=0;panPointer=null;
     lightbox.classList.remove('is-panning');
     lightboxImage.alt=img.alt||'이미지 상세보기';
+    // The initial viewer is empty until the HD original is decoded. Keep a
+    // centered progress indicator visible throughout that actual wait.
+    // During a gallery slide, the decoded incoming frame remains onscreen.
+    if(!handoff)setImageLoading('loading');
     let handled=false;
-    const ready=()=>{
+    const ready=async()=>{
       if(handled || token!==lightboxOpenToken)return;
       handled=true;
-      // v1.50.125: keep the animated incoming frame in place until the live
-      // image is fully opaque and has painted. Previous code cleared the frame
-      // as the live image began a 350ms fade, causing a visible blink.
+      // onload can fire before a large PNG finishes decoding. Do not remove
+      // the spinner until the full image is ready for the next paint.
+      try{if(lightboxImage.decode)await lightboxImage.decode();}catch(_err){}
+      if(token!==lightboxOpenToken || lightbox.hidden)return;
+      if(!lightboxImage.naturalWidth){
+        lightboxImage.style.opacity='0';
+        setImageLoading('error');
+        if(handoff)onReady();
+        return;
+      }
+      // Preserve the already-animated incoming frame until the real image
+      // is ready, avoiding the flashing observed in previous gallery versions.
       if(handoff)lightboxImage.style.transition='none';
       updateBaseWidth();
-      lightboxImage.style.opacity=handoff?'1':'';
+      lightboxImage.style.opacity='1';
       if(handoff){
         requestAnimationFrame(()=>requestAnimationFrame(()=>{
           if(token!==lightboxOpenToken || lightbox.hidden)return;
           onReady();
         }));
+      }else{
+        requestAnimationFrame(()=>{
+          if(token===lightboxOpenToken && !lightbox.hidden)setImageLoading('ready');
+        });
       }
+    };
+    const failed=()=>{
+      if(token!==lightboxOpenToken || lightbox.hidden)return;
+      handled=true;
+      lightboxImage.style.opacity='0';
+      setImageLoading('error');
+      if(handoff){onReady();lightboxImage.style.opacity='0';}
     };
     lightboxImage.style.opacity='0';
     lightboxImage.onload=ready;
-    lightboxImage.onerror=ready;
-    lightboxImage.src=img.currentSrc||img.src;
-    if(lightboxImage.complete && lightboxImage.naturalWidth)ready();
+    lightboxImage.onerror=failed;
+    lightboxImage.src=detailOriginalSource(img);
+    if(lightboxImage.complete){
+      if(lightboxImage.naturalWidth)ready();
+      else if(lightboxImage.currentSrc)failed();
+    }
     paintViewer();syncGalleryArrows();
   }
   async function slideGalleryImage(direction,nextIndex){
@@ -1364,7 +1489,7 @@
     gallerySliding=true;
     const session=++gallerySlideSession;
     const nextSource=galleryImages[nextIndex];
-    const nextUrl=nextSource.currentSrc||nextSource.src;
+    const nextUrl=detailOriginalSource(nextSource);
     const incoming=new Image();
     incoming.alt=nextSource.alt||'이미지 상세보기';
     incoming.draggable=false;
@@ -1431,7 +1556,7 @@
   function changeGalleryImage(direction){
     if(lightbox.hidden || galleryImages.length<2 || gallerySliding)return;
     const target=(galleryIndex+direction+galleryImages.length)%galleryImages.length;
-    if(gallerySection==='final' || gallerySection==='insight')slideGalleryImage(direction,target);
+    if(gallerySection==='final' || gallerySection==='insight' || gallerySection==='problem')slideGalleryImage(direction,target);
     else{galleryIndex=target;loadGalleryImage(galleryImages[galleryIndex]);}
   }
   previousImage.addEventListener('click',()=>changeGalleryImage(-1));
@@ -1444,6 +1569,7 @@
     galleryIndex=Math.max(0,galleryImages.indexOf(img));
     gallerySection=img.closest('.orbit-detail-section')?.dataset.section||'';
     ++gallerySlideSession;gallerySliding=false;clearGallerySlide();
+    setImageLoading('hidden');
     spaceHeld=false;panPointer=null;
     lightbox.hidden=false;lightbox.classList.remove('is-open','is-panning','is-space-held');
     loadGalleryImage(img);
@@ -1459,12 +1585,12 @@
       const img=trigger.querySelector('img');if(img)showLightbox(img,trigger);
       return;
     }
-    const img=event.target.closest('img.orbit-insight-zoomable');
+    const img=event.target.closest('img.orbit-insight-zoomable, img.orbit-problem-zoomable');
     if(img)showLightbox(img,img);
   });
   scroll.addEventListener('keydown',event=>{
     if(!current || (event.key!=='Enter' && event.key!==' '))return;
-    const img=event.target.closest('img.orbit-insight-zoomable');
+    const img=event.target.closest('img.orbit-insight-zoomable, img.orbit-problem-zoomable');
     if(!img)return;
     event.preventDefault();showLightbox(img,img);
   });

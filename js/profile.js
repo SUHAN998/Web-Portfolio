@@ -59,7 +59,7 @@
     // Each right-hand label is 90% of its v1.50.29 rendered size (.8 * .9).
     fitAt(lo);
     english.style.fontSize = (30 * lo * 0.72 * (Number(getComputedStyle(document.documentElement).getPropertyValue('--orbit-type-adjust')) || 1)).toFixed(3) + 'px';
-    mbti.style.fontSize = (26 * lo * 0.72 * (Number(getComputedStyle(document.documentElement).getPropertyValue('--orbit-type-adjust')) || 1)).toFixed(3) + 'px';
+    mbti.style.fontSize = (26 * lo * 0.72 * 1.1 * (Number(getComputedStyle(document.documentElement).getPropertyValue('--orbit-type-adjust')) || 1)).toFixed(3) + 'px';
   }
   reason.addEventListener('animationend', event => {
     if (event.animationName === 'reasonOpen') {

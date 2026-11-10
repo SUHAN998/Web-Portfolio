@@ -6,7 +6,7 @@
   'use strict';
   const ui = document.getElementById('orbit-logo-ui');
   const personalMark = document.getElementById('orbit-personal-logo');
-  const USE_2D_LOGO = !!personalMark;
+  const USE_2D_LOGO = !!personalMark; // Preserve the existing DOM-logo route for Celestial.
   // v1.50.100: a single shared intro-glow clock controls the logo reveal.
   // The first visible logo pixel coincides with the white wash entering its
   // logo area (70% of the accelerated glow); it finishes at the actual peak.
@@ -103,7 +103,6 @@
   const SAT_REAR_RELEASE_END=.97;
   const SAT_RECEIVED_YAW=.95;
   let satelliteFacing=null;
-  let wavePaths=[];
   const SAT_FRAMES=[
     {t:0.00,x:1100,y:-765,rx:-.035,ry:.16,rz:-.47}, // completely off right/bottom
     {t:0.28,x:650,y:-400,rx:-.055,ry:1.90,rz:-.44}, // p.13 rear/bottom-right (body ~1370,912)
@@ -149,12 +148,10 @@
       <p>신호 대기 중<span class="orbit-wait-dots" aria-hidden="true"><i>.</i><i>.</i><i>.</i></span></p>
       <small>위성을 눌러 연락처를 확인해 보세요.</small>
     </div>
-    <svg class="orbit-satellite-radio" aria-hidden="true" viewBox="0 0 600 1000" preserveAspectRatio="none"><path></path><path></path><path></path><path></path></svg>
     <div class="orbit-satellite-beep" aria-hidden="true">Beep, Beep...</div>
     <button type="button" class="orbit-satellite-hit" aria-label="인공위성 클릭하여 연락처 확인"></button>`;
   stageNode?.appendChild(satelliteUI);
   const satelliteHit=satelliteUI.querySelector('.orbit-satellite-hit');
-  wavePaths=[...satelliteUI.querySelectorAll('.orbit-satellite-radio path')];
   const satEase=t=>t*t*(3-2*t);
   const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const lerp=(a,b,t)=>a+(b-a)*t;
@@ -231,20 +228,8 @@
   // Three.js camera-facing broadcast, widening to the ~535px cyan sector.
   // Coordinates are native storyboard 1440x1024, not browser screenshot pixels.
   function updateSatelliteRadio(now){
-    if(!wavePaths.length)return;
-    const transmitting=satellitePhase==='waiting' || satellitePhase==='shift' || satellitePhase==='reverse';
-    const elapsed=Math.max(0,now-satelliteMotion);
-    const cycle=3150;
-    const up=-148*Math.PI/180,down=-197*Math.PI/180;
-    wavePaths.forEach((path,i)=>{
-      if(!transmitting){path.style.opacity='0';return;}
-      const phase=(((elapsed/cycle)+(i/wavePaths.length))%1+1)%1;
-      const r=45+phase*490;
-      const x0=600+r*Math.cos(up), y0=500+r*Math.sin(up);
-      const x1=600+r*Math.cos(down), y1=500+r*Math.sin(down);
-      path.setAttribute('d',`M ${x0.toFixed(2)} ${y0.toFixed(2)} A ${r.toFixed(2)} ${r.toFixed(2)} 0 0 0 ${x1.toFixed(2)} ${y1.toFixed(2)}`);
-      path.style.opacity=(.78*Math.sin(Math.PI*phase)).toFixed(3);
-    });
+    window.ClearOrbitVisuals?.updateRadio(now, satellite, satellitePhase,
+      satelliteUI.classList.contains('is-transmitting'), api);
   }
   async function ensureSatellite(){
     if(satellite || loadingSatellite || !api)return;
@@ -259,6 +244,7 @@
       loader.setMeshoptDecoder(THREE.MeshoptDecoder);
       const gltf=await loader.parseAsync(bytes.buffer,'');
       const model=gltf.scene;
+      window.ClearOrbitVisuals?.finishSatellite(model, api);
       const box=new THREE.Box3().setFromObject(model);
       const bbox=box.getSize(new THREE.Vector3());
       const center=box.getCenter(new THREE.Vector3());
@@ -303,10 +289,11 @@
     requestAnimationFrame(()=>requestAnimationFrame(()=>{
       if(satellitePhase==='waiting'){
         satelliteUI.classList.add('is-waiting');
-        // Transmission starts 0.5s after the 0.78s channel fade-in completes.
-        setTimeout(()=>{if(satellitePhase==='waiting')satelliteUI.classList.add('is-transmitting');},1280);
+        // Arrival transmission is immediate; the channel text keeps its original fade-in.
+        satelliteUI.classList.add('is-transmitting');
       }
     }));
+    satelliteUI.classList.add('is-transmitting');
     satelliteHit.disabled=false;
     positionSatellite(SAT_WAIT.x,SAT_WAIT.y);
     window.__CLEAR_ORBIT_STATE='CONTACT_WAIT';
@@ -336,6 +323,8 @@
     flightPose(0);
   }
   function stopSatellite(){
+    pendingBackPhase=null;
+    window.ClearOrbitVisuals?.cancelRadioFade();
     setSatelliteBackground(mode==='contact');
     satellitePhase='hidden';satelliteProgress=0;
     setSatelliteFacing(1);
@@ -355,6 +344,13 @@
     window.__CLEAR_ORBIT_STATE='CONTACT_TRANSITION';
   }
   function reverseFlight(){
+    if(satellitePhase==='reverse'||satellitePhase==='radio-exit')return true;
+    if(window.ClearOrbitVisuals?.radioIsClear())return beginReverseFlight();
+    satellitePhase='radio-exit';satelliteUI.classList.remove('is-transmitting');satelliteHit.disabled=true;
+    window.ClearOrbitVisuals?.beginRadioFade();
+    return true;
+  }
+  function beginReverseFlight(){
     if(satellitePhase==='reverse')return true;
     satelliteReverseStart=satellitePhase==='waiting'?1:satelliteProgress;
     satellitePhase='reverse';satelliteStart=performance.now();
@@ -372,6 +368,9 @@
   }
   function satelliteBack(){
     cancelContactTyping();setContactFocus(false);
+    if((satellitePhase==='received'||satellitePhase==='shift') && !window.ClearOrbitVisuals?.radioIsClear()){
+      pendingBackPhase=satellitePhase;satellitePhase='radio-exit';satelliteUI.classList.remove('is-transmitting');satelliteHit.disabled=true;window.ClearOrbitVisuals?.beginRadioFade();return true;
+    }
     if(satellitePhase==='received'||satellitePhase==='shift'){
       // When the panel is visible, do NOT hide it. Reverse the precise
       // upward spring motion all the way below the stage before unshifting.
@@ -390,13 +389,15 @@
       satelliteUI.hidden=true;
       return true;
     }
-    if(satellitePhase==='panel-exit'||satellitePhase==='unshift')return true;
+    if(satellitePhase==='panel-exit'||satellitePhase==='unshift'||satellitePhase==='radio-exit')return true;
     if(satellitePhase==='approach'||satellitePhase==='waiting'||satellitePhase==='reverse')
       return reverseFlight();
     if(satellitePhase==='loading'){stopSatellite();return false;}
     return false;
   }
   function satelliteForward(){
+    if(satellitePhase==='radio-exit' && pendingBackPhase){window.ClearOrbitVisuals?.cancelRadioFade();satellitePhase=pendingBackPhase;pendingBackPhase=null;return true;}
+    if(satellitePhase==='radio-exit'){window.ClearOrbitVisuals?.cancelRadioFade();satellitePhase='reverse';}
     if(satellitePhase!=='reverse')return false;
     satellitePhase='approach';
     satelliteStart=performance.now()-satelliteProgress*(reduceMotion?1:SAT_FLIGHT_MS);
@@ -408,7 +409,11 @@
   window.addEventListener('orbit:satellite-enter',()=>{if(!api)onReady();void startSatellite();});
   window.addEventListener('orbit:satellite-exit',stopSatellite);
   window.ClearOrbitSatellite={back:satelliteBack,forward:satelliteForward,get state(){return satellitePhase;},get progress(){return satelliteProgress;}};
+  let pendingBackPhase=null;
   function updateSatellite(now){
+    if(satellitePhase==='radio-exit' && window.ClearOrbitVisuals?.radioIsClear()){
+      if(pendingBackPhase){satellitePhase=pendingBackPhase;pendingBackPhase=null;satelliteBack();}else beginReverseFlight();
+    }
     if(!satellite)return;
     if(satellitePhase==='hidden'||satellitePhase==='loading'){
       if(mode==='contact'){
@@ -571,8 +576,11 @@
         const elapsed=inGlow ? Math.max(0,api.intro?.elapsedGlow?.()??0) : fadeEnd;
         const logoProgress=inGlow ? clamp01((elapsed-fadeStart)/(fadeEnd-fadeStart)) : 1;
         const logoAlpha=logoProgress*logoProgress; // no visible mark early in the flare
-        const showMark=api.logo.isLoaded && (cameraAttached || visible || (revealing && logoAlpha>0) || introPhase==='LOGO_DOCKED');
-        personalMark.style.setProperty('--orbit-logo-reveal-alpha', logoAlpha.toFixed(4));
+        const introLight=!cameraAttached && (introPhase==='INTRO_IDLE' || inGlow);
+        const showMark=api.logo.isLoaded && (introLight || cameraAttached || visible || (revealing && logoAlpha>0) || introPhase==='LOGO_DOCKED');
+        personalMark.style.setProperty('--orbit-logo-reveal-alpha', '1');
+        personalMark.dataset.orbitReveal=introLight ? (inGlow ? logoAlpha : 0) : 1;
+        personalMark.style.transform=introLight ? `translate(${-50+.76*(inGlow?logoAlpha:0)}%,${-50-3.8*(inGlow?logoAlpha:0)}%)` : '';
         personalMark.classList.toggle('is-revealing', revealing);
         personalMark.classList.toggle('is-visible', !!showMark);
         personalMark.classList.toggle('is-hovered', !!(logoInteractive && (hovered || isOpen)));
@@ -584,6 +592,7 @@
         ui.style.height=(width*(USE_2D_LOGO?1199/1312:148/PROFILE.width)).toFixed(2)+'px';
         ui.classList.toggle('is-traveling',!!tween);
       }
+      window.ClearOrbitVisuals?.updateLogo(now);
     });
   }
   window.addEventListener('orbit3dready',onReady);
@@ -764,6 +773,8 @@
     if(label)label.textContent='Show Detail';
   }
   function measureShortcutProfile(){
+    const mbtiSize=profile.querySelector(".profile-identity-right small")?.style.fontSize;
+    if(mbtiSize)shortcutProfile.querySelector(".profile-identity-right small").style.fontSize=mbtiSize;
     if(shortcutProfile.hidden)return;
     const reasonInner=shortcutReason?.querySelector('.reason-inner');
     if(reasonInner && shortcutReason){

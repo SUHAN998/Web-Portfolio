@@ -196,8 +196,8 @@ html.orbit-shortcut-open .orbit-logo-ui{pointer-events:none}
  animation:ringProgress .9s cubic-bezier(.16,.82,.27,1) 0s both;
 }
 
-/* v1.50.24 — supplied 2D orbital symbol, one image for reveal/docked/Explore.
-   Its central four-point star is ~60% of the artboard; no extra UI ornament. */
+/* Shared logo footprint for reveal/docked/Explore. Celestial renders inside it;
+   the original anchor, sizes and outer opacity remain navigation-controlled. */
 .orbit-personal-logo {
   position:absolute;
   z-index:21;
@@ -209,14 +209,14 @@ html.orbit-shortcut-open .orbit-logo-ui{pointer-events:none}
   pointer-events:none;
   user-select:none;
   opacity:0;
-  transition:opacity .34s ease, filter .26s ease;
+  transition:opacity .34s ease;
   filter:none;
   object-fit:contain;
   image-rendering:auto;
 }
 .orbit-personal-logo.is-visible {opacity:var(--orbit-logo-reveal-alpha, 1)}
-.orbit-personal-logo.is-revealing {transition:filter .26s ease}
-.orbit-personal-logo.is-hovered {filter:drop-shadow(0 0 9px rgba(238,246,255,.27))}
+.orbit-personal-logo.is-revealing {transition:none}
+
 @media(prefers-reduced-motion:reduce){.orbit-personal-logo {transition-duration:.08s}}
 
 /* v1.50.69: the menu hit area is inactive throughout INTRO / PROFILE and
@@ -227,12 +227,5 @@ html.orbit-shortcut-open .orbit-logo-ui{pointer-events:none}
 }
 .orbit-logo-ui:not(.is-interactive) .orbit-logo-menu {
   pointer-events:none;
-}
-/* Fast but restrained hover halo around the actual provided logo bitmap. */
-.orbit-personal-logo {
-  transition:opacity .34s ease, filter .15s ease-out;
-}
-.orbit-personal-logo.is-hovered {
-  filter:drop-shadow(0 0 7px rgba(243,249,255,.34)) drop-shadow(0 0 19px rgba(196,222,255,.20));
 }
 @media(prefers-reduced-motion:reduce){.orbit-personal-logo{transition-duration:.01ms}}

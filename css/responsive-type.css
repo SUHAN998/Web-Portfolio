@@ -348,11 +348,10 @@
 .orbit-personal-logo{
  transform-origin:50% 50%;
  transform:translate(-49.24%,-53.8%) scale(1);
- transition:opacity .34s ease,filter .85s ease,transform .92s cubic-bezier(.22,1,.36,1)!important;
+ transition:opacity .34s ease,transform .92s cubic-bezier(.22,1,.36,1)!important;
 }
 .orbit-personal-logo.is-hovered{
  transform:translate(-49.24%,-53.8%) scale(1.05);
- filter:drop-shadow(0 0 10.2px rgba(243,249,255,.432)) drop-shadow(0 0 24px rgba(196,222,255,.264))!important;
 }
 /* Phone links: enlarge only the number, both shortcut and end-of-journey layouts. */
 .orbit-shortcut-contact-field:last-child a{font-size:calc(28.8px * var(--orbit-type-adjust,1))}

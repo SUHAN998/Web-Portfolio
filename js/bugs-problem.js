@@ -86,6 +86,19 @@
     // v1.50.74: compact, NAVER-style in-screen captions; never alter the issue text.
     el.querySelector('.orbit-bugs-problem-screen').insertAdjacentHTML('beforeend',
       `<div class="orbit-problem-film-caption orbit-bugs-film-caption" aria-hidden="true"><span class="cap-1">01 · 한 손 조작의 불편함</span><span class="cap-2">02 · 현재 재생곡 식별성 부족</span><span class="cap-3">03 · 시각적 위계의 불명확성</span></div>`);
+    // Full-resolution originals are retained only for PROBLEM enlarged mode.
+    // The animated phone on the DETAIL page uses small WebP previews.
+    el.querySelectorAll('.orbit-bugs-problem-player img,.orbit-bugs-problem-playlist-content img').forEach(img=>{
+      const original=img.getAttribute('src');
+      if(!original || !original.startsWith('ASSET/05_MODAL_01_BUGS/'))return;
+      img.setAttribute('data-orbit-original',original);
+      const preview=original.replace(/^ASSET\//,'ASSET/_PREVIEW/').replace(/\.png$/i,'.webp');
+      // v1.50.141: an absent preview must never leave the animated phone blank.
+      img.addEventListener('error',function restoreBugsOriginal(){
+        if(img.getAttribute('src')===preview)img.setAttribute('src',original);
+      },{once:true});
+      img.setAttribute('src',preview);
+    });
     return el;
   }
   function getGrid(section){

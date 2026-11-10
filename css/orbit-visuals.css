@@ -1,0 +1,9 @@
+/* Keep the original outer footprint, anchor and navigation opacity timeline. */
+.orbit-personal-logo {aspect-ratio:1312/1199;overflow:visible;}
+/* Padding keeps the optical halo away from the canvas boundary. The renderer
+   compensates its coordinates, so expanding this surface does not scale the logo. */
+.orbit-celestial-canvas {
+  position:absolute;left:-17.5%;top:-17.5%;width:135%;height:135%;
+  display:block;pointer-events:none;background:transparent;mix-blend-mode:screen;
+}
+.orbit-satellite-radio {display:none!important;}

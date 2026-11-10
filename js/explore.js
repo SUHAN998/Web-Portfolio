@@ -147,7 +147,16 @@
     const copy=document.createElement('span');copy.className='orbit-project-copy';
     const arrow=document.createElement('span');arrow.className='orbit-project-arrow'; arrow.textContent='↟';
     const cat=document.createElement('span');cat.className='orbit-project-category';cat.textContent=p.category;
-    const name=document.createElement('span');name.className='orbit-project-name';name.textContent=p.name;
+    // Keep the project name at its approved size; de-emphasize only the
+    // two descriptors below (REDESIGN PROJECT / BROCHURE DESIGN / PROMOTION WEBSITE).
+    const name=document.createElement('span');name.className='orbit-project-name';
+    const [projectName,...descriptorLines]=p.name.split('\n');
+    const primary=document.createElement('span');primary.className='orbit-project-name-primary';primary.textContent=projectName;
+    name.appendChild(primary);
+    if(descriptorLines.length){
+      const secondary=document.createElement('span');secondary.className='orbit-project-name-secondary';
+      secondary.textContent=descriptorLines.join('\n');name.appendChild(secondary);
+    }
     copy.append(arrow,cat,name);b.append(halo,glint,pinpoint,copy); holder.appendChild(b);
     b.addEventListener('pointerenter',event=>{
       if(!b.classList.contains('is-frontmost'))return;
@@ -655,6 +664,7 @@
     cameraRef=api.stage.camera;
     cameraOrigin=api.stage.metrics.camDistance;
     galaxy=buildGalaxy(THREE);
+    galaxy.group.name='Orbit world galaxy';
     galaxy.spiral=buildSpiralGalaxy(THREE);
     // Galaxy is farther than all six project planets; scaling preserves its
     // projected layout while letting the real z-buffer keep planets in front.
