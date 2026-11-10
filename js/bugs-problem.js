@@ -92,7 +92,12 @@
       const original=img.getAttribute('src');
       if(!original || !original.startsWith('ASSET/05_MODAL_01_BUGS/'))return;
       img.setAttribute('data-orbit-original',original);
-      img.setAttribute('src',original.replace(/^ASSET\//,'ASSET/_PREVIEW/').replace(/\.png$/i,'.webp'));
+      const preview=original.replace(/^ASSET\//,'ASSET/_PREVIEW/').replace(/\.png$/i,'.webp');
+      // v1.50.141: an absent preview must never leave the animated phone blank.
+      img.addEventListener('error',function restoreBugsOriginal(){
+        if(img.getAttribute('src')===preview)img.setAttribute('src',original);
+      },{once:true});
+      img.setAttribute('src',preview);
     });
     return el;
   }

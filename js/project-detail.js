@@ -365,6 +365,11 @@
       const preview=detailPreviewSrc(original);
       if(!preview)return;
       img.setAttribute('data-orbit-original',original);
+      // v1.50.141: fail open if a preview was omitted by a host/build or
+      // cannot be decoded. The full-resolution source is always preserved.
+      img.addEventListener('error',function restoreDetailOriginal(){
+        if(img.getAttribute('src')===preview)img.setAttribute('src',original);
+      },{once:true});
       img.setAttribute('src',preview);
     });
   }
