@@ -2876,3 +2876,7 @@ html.orbit-problem-native-cursor .orbit-stroke-cursor{visibility:hidden!importan
   border-top:1px solid rgba(166,190,224,.38);
   padding-top:14px;
 }
+
+/* v1.50.140: original-resolution viewer for still PROBLEM photographs. */
+.orbit-project-detail .orbit-detail-section[data-section="problem"] img.orbit-problem-zoomable{cursor:zoom-in}
+.orbit-project-detail .orbit-detail-section[data-section="problem"] img.orbit-problem-zoomable:focus-visible{outline:2px solid #739DF8;outline-offset:2px}

@@ -348,6 +348,28 @@
       </div>`).join('')}
     </div>`;
   }
+  // v1.50.140 — PROBLEM / INSIGHT / RESULT: thumbnails load separately
+  // from untouched high-resolution originals. The preview folder mirrors
+  // the ASSET project paths; OVERVIEW and SOLUTION remain unchanged.
+  const detailPreviewSrc = (original) => {
+    if(!/^ASSET\/05_MODAL_[^?#]+\.(?:png|jpe?g)$/i.test(original||''))return null;
+    return original.replace(/^ASSET\//,'ASSET/_PREVIEW/').replace(/\.(?:png|jpe?g)$/i,'.webp');
+  };
+  function prepareDetailPreviews(fragment,keepBugsLegacy=false){
+    fragment.querySelectorAll('[data-section="problem"] img,[data-section="insight"] img,[data-section="final"] img').forEach(img=>{
+      if(img.hasAttribute('data-orbit-original'))return;
+      const original=img.getAttribute('src');
+      // BUGS storyboard locates the two original problem images by filename
+      // before it swaps the static slot for its own animated film.
+      if(keepBugsLegacy && /02_01B_PROBLEM_0[12]\.png$/i.test(original||''))return;
+      const preview=detailPreviewSrc(original);
+      if(!preview)return;
+      img.setAttribute('data-orbit-original',original);
+      img.setAttribute('src',preview);
+    });
+  }
+  const detailOriginalSource=img=>img?.getAttribute('data-orbit-original')||img?.currentSrc||img?.src||'';
+
   function render(item) {
     stopSevenLogoAuto();
     const meta = item.media;
@@ -462,7 +484,12 @@
     const solution = section('solution','SOLUTION',`<div class="orbit-detail-kicker">SOLUTION</div><div class="orbit-detail-solution-grid${prototypeKind?' orbit-detail-solution-grid--prototype orbit-detail-solution-grid--'+prototypeKind:''}">${solutionMedia}<div class="orbit-detail-solution-points">${solutionGroups}</div></div>`);
     const finalHeading=item.key==='seven'?'VISUAL APPLICATION':'FINAL DESIGN';
     const final = section('final',finalHeading,`<div class="orbit-detail-kicker">${finalHeading}</div>${media(meta.final,item.title+' 최종 결과물','final',item.key)}`);
-    scroll.innerHTML = overview + problem + insight + solution + final;
+    // Rewrite image URLs while the markup is DETACHED: the browser never
+    // starts downloading full-resolution previews only to cancel them.
+    const detailMarkup=document.createElement('template');
+    detailMarkup.innerHTML=overview+problem+insight+solution+final;
+    prepareDetailPreviews(detailMarkup.content,item.key==='bugs');
+    scroll.replaceChildren(detailMarkup.content);
     // v1.50.105: every genuine INSIGHT image (analysis, evidence and comparison)
     // opens the same viewer as BENCHMARK and RESULT. Do not create a new viewer.
     scroll.querySelectorAll('.orbit-detail-section[data-section="insight"] img').forEach(img=>{
@@ -471,6 +498,15 @@
       img.setAttribute('role','button');
       img.setAttribute('tabindex','0');
       img.setAttribute('aria-label',(img.alt||'분석 이미지')+' 크게 보기');
+    });
+    // Other PROBLEM projects show a still-image comparison instead of a
+    // looping film. Use the same full-resolution lightbox for those figures.
+    scroll.querySelectorAll('.orbit-detail-section[data-section="problem"] .orbit-detail-media--problem img').forEach(img=>{
+      if(img.closest('.orbit-bugs-problem-animated,.orbit-naver-problem-film,.orbit-aladin-problem-film,.orbit-cave-problem-film,.orbit-gta-planning-film'))return;
+      img.classList.add('orbit-problem-zoomable');
+      img.setAttribute('role','button');
+      img.setAttribute('tabindex','0');
+      img.setAttribute('aria-label',(img.alt||'문제 분석 이미지')+' 크게 보기');
     });
     // v1.50.97: preserve 9.9px type, +1.5px horizontal pill padding, 5px gaps.
     // Show 4 tags only when they genuinely fit inside the 216px marked region;
@@ -1161,6 +1197,21 @@
     const split=document.createElement('div');split.className='orbit-detail-split';
     const media=document.createElement('div');media.className='orbit-detail-media orbit-detail-media--problem';
     liveCopy=source.cloneNode(true);
+    // Keep preview frames on screen until each high-res frame is decoded;
+    // swapping src on an undecoded PNG could otherwise flash an empty phone.
+    const enlargedCopy=liveCopy;
+    enlargedCopy.querySelectorAll('img[data-orbit-original]').forEach(img=>{
+      const original=img.getAttribute('data-orbit-original');
+      if(!original)return;
+      const highRes=new Image();
+      highRes.src=original;
+      const promote=()=>{
+        if(liveCopy!==enlargedCopy || !img.isConnected || problemViewer.hidden)return;
+        img.src=original;
+      };
+      if(highRes.decode)highRes.decode().then(promote).catch(()=>{});
+      else highRes.onload=promote;
+    });
     media.append(liveCopy);split.append(media);section.append(split);holder.append(section);
     liveFrame=document.createElement('div');liveFrame.className='orbit-problem-live-film-frame';
     liveFrame.style.width=liveFrameWidth+'px';liveFrame.style.height=liveFrameHeight+'px';
@@ -1310,6 +1361,9 @@
     if(section.dataset.section==='insight'){
       return [...section.querySelectorAll('img.orbit-insight-zoomable')];
     }
+    if(section.dataset.section==='problem'){
+      return [...section.querySelectorAll('img.orbit-problem-zoomable')];
+    }
     return [img];
   }
   function syncGalleryArrows(){
@@ -1355,7 +1409,7 @@
     lightboxImage.style.opacity='0';
     lightboxImage.onload=ready;
     lightboxImage.onerror=ready;
-    lightboxImage.src=img.currentSrc||img.src;
+    lightboxImage.src=detailOriginalSource(img);
     if(lightboxImage.complete && lightboxImage.naturalWidth)ready();
     paintViewer();syncGalleryArrows();
   }
@@ -1364,7 +1418,7 @@
     gallerySliding=true;
     const session=++gallerySlideSession;
     const nextSource=galleryImages[nextIndex];
-    const nextUrl=nextSource.currentSrc||nextSource.src;
+    const nextUrl=detailOriginalSource(nextSource);
     const incoming=new Image();
     incoming.alt=nextSource.alt||'이미지 상세보기';
     incoming.draggable=false;
@@ -1431,7 +1485,7 @@
   function changeGalleryImage(direction){
     if(lightbox.hidden || galleryImages.length<2 || gallerySliding)return;
     const target=(galleryIndex+direction+galleryImages.length)%galleryImages.length;
-    if(gallerySection==='final' || gallerySection==='insight')slideGalleryImage(direction,target);
+    if(gallerySection==='final' || gallerySection==='insight' || gallerySection==='problem')slideGalleryImage(direction,target);
     else{galleryIndex=target;loadGalleryImage(galleryImages[galleryIndex]);}
   }
   previousImage.addEventListener('click',()=>changeGalleryImage(-1));
@@ -1459,12 +1513,12 @@
       const img=trigger.querySelector('img');if(img)showLightbox(img,trigger);
       return;
     }
-    const img=event.target.closest('img.orbit-insight-zoomable');
+    const img=event.target.closest('img.orbit-insight-zoomable, img.orbit-problem-zoomable');
     if(img)showLightbox(img,img);
   });
   scroll.addEventListener('keydown',event=>{
     if(!current || (event.key!=='Enter' && event.key!==' '))return;
-    const img=event.target.closest('img.orbit-insight-zoomable');
+    const img=event.target.closest('img.orbit-insight-zoomable, img.orbit-problem-zoomable');
     if(!img)return;
     event.preventDefault();showLightbox(img,img);
   });
