@@ -93,6 +93,10 @@
 .orbit-project-category{display:block;color:#91caff;letter-spacing:.04em;font-size:calc(20px * var(--orbit-type-adjust,1));font-weight:550;line-height:1.28;text-align:center}
 .orbit-planet.is-red .orbit-project-category{color:#ff8c91}
 .orbit-project-name{display:block;color:#f7f9fe;white-space:pre-line;font-size:calc(30px * var(--orbit-type-adjust,1));font-weight:740;line-height:1.18;letter-spacing:-.025em;margin-top:12px;text-align:center}
+/* v1.50.139: project names remain unchanged; descriptors are 80% size.
+   Inherits the existing responsive font multiplier and focus-state line height. */
+.orbit-project-name-primary{display:block}
+.orbit-project-name-secondary{display:block;white-space:pre-line;font-size:.8em;color:#B0B0DA;font-weight:620;line-height:inherit}
 /* HUD geometry measured from 01_MAIN_FLOW.pdf p.6 (1440×1024).
    left 452, right 988, signal/title top 887, divider y927, lower controls y936. */
 .orbit-hud{position:absolute;left:452px;top:887px;width:536px;height:69px;text-align:left;opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s cubic-bezier(.16,1,.3,1);pointer-events:none}
@@ -152,12 +156,14 @@
 .orbit-planet:hover .orbit-planet-glint,.orbit-planet:focus-visible .orbit-planet-glint{
   opacity:calc(.80 * var(--orbit-ray-fade,1) + .98 * var(--orbit-far-glint,0));}
 /* One circular STROKE cursor across INTRO, PROFILE and EXPLORE. No hit blocking. */
-.orbit-stroke-cursor{position:fixed;left:0;top:0;width:22px;height:22px;border:1.3px solid rgba(250,253,255,.96);
+.orbit-stroke-cursor{position:fixed;left:0;top:0;width:22px;height:22px;border:1.3px solid #fff;
   border-radius:50%;box-sizing:border-box;background:transparent;pointer-events:none;
+  /* White ring over dark surfaces, dark ring over light artwork. */
+  mix-blend-mode:difference;
   transform:translate3d(-50%,-50%,0) scale(1);
   transition:transform .18s cubic-bezier(.2,.7,.2,1),opacity .22s ease;
   opacity:0;z-index:2147483640;will-change:left,top,transform;
-  box-shadow:0 0 7px rgba(190,218,255,.13)}
+  box-shadow:none}
 .orbit-stroke-cursor.is-visible{opacity:var(--orbit-prototype-cursor-opacity,1)}
 .orbit-stroke-cursor.is-pressed{transform:translate3d(-50%,-50%,0) scale(2)}
 @media(hover:hover) and (pointer:fine){html.orbit-cursor-enabled,html.orbit-cursor-enabled *{cursor:none!important}}
