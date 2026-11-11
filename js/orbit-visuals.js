@@ -123,6 +123,11 @@
     radio.position.copy(emitter);radio.quaternion.copy(satellite.quaternion);
     radio.rotateZ(-.13);radio.rotateY(.24);
   }
+  const peakBlur=document.createElement('div');
+  peakBlur.setAttribute('aria-hidden','true');
+  Object.assign(peakBlur.style,{position:'fixed',inset:'0',zIndex:'9999',pointerEvents:'none',backdropFilter:'blur(2px)',webkitBackdropFilter:'blur(2px)',opacity:'0'});
+  document.body.appendChild(peakBlur);
+  let lastIntroPhase='',peakBlurStarted=-Infinity;
   function updateLogo() {
     if (!logo || logo.destroyed) return;
     const api=window.__ORBIT_3D_SCENE, intro=api?.intro;
@@ -134,6 +139,12 @@
       api.light.group.children[1].visible=false;
       api.light.group.children[2].visible=false;
       const phase=intro.machine.state;
+      // The existing reveal begins exactly after the expansion reaches its peak.
+      if(phase==='LOGO_REVEAL' && lastIntroPhase==='INTRO_STAR_GLOW')peakBlurStarted=performance.now();
+      if(phase==='INTRO_IDLE')peakBlurStarted=-Infinity;
+      lastIntroPhase=phase;
+      const blurAge=(performance.now()-peakBlurStarted)/700;
+      peakBlur.style.opacity=blurAge>=0 && blurAge<1 ? String(Math.pow(Math.sin(Math.PI*blurAge),2)) : '0';
       const growing=phase==='INTRO_IDLE' || phase==='INTRO_STAR_GLOW';
       const growth=Math.max(0,Math.min(1,(intro.fx.starScale-1)/(248/60-1)));
       logo.coreScale=growing ? 60/(412*1199/1312)+(1-60/(412*1199/1312))*growth : 1;

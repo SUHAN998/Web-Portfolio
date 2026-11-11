@@ -596,8 +596,8 @@
 /* A focused globe retains its full 3D geometry/drag controls. Tighter spacing
    around the still-large project label fits the new compact left-side area. */
 .orbit-explore.has-project-detail .orbit-project-copy { top:calc(100% + 12px); }
-.orbit-explore.has-project-detail .orbit-project-arrow { margin-bottom:5px; }
-.orbit-explore.has-project-detail .orbit-project-name { margin-top:7px; line-height:1.14; }
+.orbit-explore.has-project-detail .orbit-project-text { padding-top:calc(var(--orbit-arrow-slot) + 5px); }
+/* Project name/descriptor spacing is shared with EXPLORE; no modal override. */
 
 /* v1.50.14 — one continuous, feather-masked backdrop for ALL six project
    modals. Old rectangular dimmer bands left an unblurred left column and hard
@@ -740,6 +740,7 @@
 /* Keep the selected planet's projected 2D label sharp; soften OTHER 2D
    explorer controls without changing WebGL objects or focus camera. */
 .orbit-explore.has-project-detail .orbit-planet:not(.is-selected-detail){filter:blur(4px) brightness(.8)}
+.orbit-explore.has-project-detail .orbit-constellation,
 .orbit-explore.has-project-detail .orbit-view-button,
 .orbit-explore.has-project-detail .orbit-explore-heading{filter:blur(4px) brightness(.8)}
 /* BUGS and ALADIN reuse the existing PNG phone and Figma Flow iframe. */
@@ -2935,4 +2936,25 @@ html.orbit-problem-native-cursor .orbit-stroke-cursor{visibility:hidden!importan
   .orbit-detail-lightbox .orbit-lightbox-loading,
   .orbit-detail-lightbox .orbit-lightbox-loading-retry{transition:none!important}
   .orbit-detail-lightbox .orbit-lightbox-loading-ring{animation:none!important}
+}
+
+/* Precise BUGS evidence frame; preserve all source pixels and aspect ratio. */
+.orbit-project-detail[data-project="bugs"] .orbit-detail-section[data-section="insight"] .orbit-insight-idc-frame{
+  display:block;width:calc(100% + 12px);max-width:calc(100% + 12px);height:200px;overflow:hidden;
+}
+.orbit-project-detail[data-project="bugs"] .orbit-detail-section[data-section="insight"] .orbit-insight-idc-evidence img{
+  width:100%;max-width:100%;height:100%;max-height:none;object-fit:contain;object-position:left center;
+}
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-benchmark-takeaway{
+  box-sizing:border-box;min-height:44px;padding-top:2px;padding-bottom:2px;align-items:center;
+}
+/* Number glyph brightness only: opacity, titles and body copy are unchanged. */
+.orbit-project-detail [data-section="insight"] .orbit-detail-row-caption>b,
+.orbit-project-detail [data-section="solution"] .orbit-detail-solution-points article>b{
+  filter:brightness(.82);
+}
+
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-benchmark-takeaway b,
+.orbit-project-detail[data-project="bugs"] .orbit-bugs-benchmark-takeaway span{
+  font-size:calc(14.5px * var(--orbit-type-adjust,1))!important;
 }

@@ -407,7 +407,7 @@
     const sevenInsightArt=(index)=> index===0 ? `<div class="orbit-seven-insight-artboard orbit-seven-insight-artboard--identity" role="img" aria-label="기존 7ELEVEN CI에 사용된 숫자 7, 워드마크와 브랜드 색상 분석"><div class="orbit-seven-identity-source">${assetImg(meta.insight[0],'7ELEVEN 로고 변천사 원본 이미지')}</div></div>` : `<div class="orbit-seven-insight-artboard orbit-seven-insight-artboard--comparison" role="img" aria-label="기존 7ELEVEN CI와 새로 제작한 기본 CI의 형태 비교"><div class="orbit-seven-artboard-eyebrow">FORM REFINEMENT · COMPARISON</div><div class="orbit-seven-compare-content"><div class="orbit-seven-compare-side"><span>ORIGINAL</span><div>${assetImg(meta.insight[0],'기존 7ELEVEN CI')}</div></div><span class="orbit-seven-compare-arrow" aria-hidden="true">→</span><div class="orbit-seven-compare-side orbit-seven-compare-side--new"><span>REFINED</span><div>${assetImg(meta.insight[1],'사용자가 제작한 새 기본 7ELEVEN CI')}</div></div></div></div>`;
     const insightRows = `<div class="orbit-detail-insight-rows">${item.insightRows.map((row,i)=>`<article>${item.key==='seven'?sevenInsightArt(i):meta.insight[i]?assetImg(meta.insight[i],item.title+' 분석 자료 '+(i+1)):`<div class="orbit-detail-empty-media orbit-detail-empty-media--insight" aria-label="이미지 미제공"></div>`}<div class="orbit-detail-row-caption"><b>0${i+1}</b><div><strong>${escape(row.title)}</strong><p>${escape(row.body)}</p></div></div></article>`).join('')}</div>`;
     // The IDC screenshot is user-supplied evidence for BUGS! only; keep existing insight artwork intact.
-    const insightEvidence=item.key==='bugs' ? `<figure class="orbit-insight-idc-evidence"><img src="ASSET/05_MODAL_01_BUGS/03_01B_IDC_MARKET_REPORT_CAPTURE.png" alt="IDC 폴더블 스마트폰 시장 전망 기사 캡처" loading="lazy" decoding="async"><figcaption>근거 자료 출처 : <a href="https://my.idc.com/getdoc.jsp?containerId=prUS54017625" target="_blank" rel="noopener noreferrer">IDC Market Report</a></figcaption></figure>` : '';
+    const insightEvidence=item.key==='bugs' ? `<figure class="orbit-insight-idc-evidence"><div class="orbit-insight-idc-frame"><img src="ASSET/05_MODAL_01_BUGS/03_01B_IDC_MARKET_REPORT_CAPTURE.png" alt="IDC 폴더블 스마트폰 시장 전망 기사 캡처" loading="lazy" decoding="async"></div><figcaption>근거 자료 출처 : <a href="https://my.idc.com/getdoc.jsp?containerId=prUS54017625" target="_blank" rel="noopener noreferrer">IDC Market Report</a></figcaption></figure>` : '';
     // BUGS! only: distill the supplied "02 - UI Benchmarking" slide into two contextual
     // figures and its Safety First takeaway. These numbers are cited as values stated
     // in the user's slide, not as independently verified conclusions of the IDC article.
@@ -1889,8 +1889,8 @@
     userScroll((touchStartY-nextY)/stageScale());touchStartY=nextY;
   },{passive:false});
   panel.addEventListener('touchend',()=>{touchStartY=null;},{passive:true});
-  // v1.50.127 — precisely align BUGS INSIGHT IDC evidence image's bottom
-  // with the neighboring second research image, regardless of loaded artwork,
+  // Align the BUGS evidence frame's top and bottom with the second research
+  // image; contain the untouched capture inside it, regardless of loaded artwork,
   // Pretendard metrics, window size, or the project panel's transform scale.
   let insightAlignmentFrame=0;
   function alignBugsInsightEvidence(){
@@ -1901,10 +1901,16 @@
     const right=chapter?.querySelector('.orbit-insight-idc-evidence img');
     const figure=chapter?.querySelector('.orbit-insight-idc-evidence');
     if(!left||!right||!figure||!left.complete||!right.complete)return;
-    figure.style.translate='0px 0px';
-    const difference=left.getBoundingClientRect().bottom-right.getBoundingClientRect().bottom;
+    const frame=figure.querySelector('.orbit-insight-idc-frame');
+    if(!frame)return;
     const effectiveScale=DETAIL_PANEL_SCALE*stageScale();
-    if(effectiveScale>0)figure.style.translate=`0px ${(difference/effectiveScale).toFixed(2)}px`;
+    if(effectiveScale<=0)return;
+    const leftBox=left.getBoundingClientRect();
+    frame.style.height=`${(leftBox.height/effectiveScale).toFixed(3)}px`;
+    figure.style.translate='0px 0px';
+    const difference=leftBox.top-frame.getBoundingClientRect().top;
+    figure.style.translate=`0px ${(difference/effectiveScale).toFixed(3)}px`;
+
   }
   function queueBugsEvidenceAlignment(){
     if(insightAlignmentFrame)cancelAnimationFrame(insightAlignmentFrame);

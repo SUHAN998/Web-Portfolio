@@ -151,3 +151,10 @@
    name's upper edge and MBTI near its lower edge, without changing portrait
    width, measured name sizes, or the fixed overall identity block height. */
 .profile-identity-right{box-sizing:border-box;padding-top:9px;padding-bottom:7px}
+
+/* Optical hover without scaling the progress ring or hit area. */
+.profile-skill-inner img{transition:transform .5s ease}
+.profile-ring::after{content:"";position:absolute;inset:0;border-radius:50%;pointer-events:none;box-shadow:0 0 10px 3px #d9ecff50,0 0 22px 8px #d4eaff30,0 0 30px 12px #badcff14;opacity:0;transition:opacity .5s ease}
+.profile-skill:hover .profile-skill-inner img{transform:scale(1.2)}
+.profile-skill:hover .profile-ring::after{opacity:1}
+@media(prefers-reduced-motion:reduce){.profile-skill-inner img,.profile-ring::after{transition:none}}

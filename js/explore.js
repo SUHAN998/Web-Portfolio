@@ -5,7 +5,7 @@
 (() => {
   'use strict';
   const PROJECTS = [
-    { key:'bugs',   z:12, x:45, y:34, kind:'blue', category:'UX/UI DESIGN', name:'BUGS!\nREDESIGN\nPROJECT', hud:'BUGS! REDESIGN PROJECT' },
+    { key:'bugs',   z:12, x:45, y:34, kind:'blue', category:'UX/UI DESIGN', name:'BUGS! APP\nREDESIGN\nPROJECT', hud:'BUGS! APP REDESIGN PROJECT' },
     { key:'naver',  z:23, x:67, y:61, kind:'blue', category:'UX/UI DESIGN', name:'NAVER 지식iN\nREDESIGN\nPROJECT', hud:'NAVER 지식iN REDESIGN PROJECT' },
     { key:'aladin', z:34, x:35, y:44, kind:'blue', category:'UX/UI DESIGN', name:'ALADIN APP\nREDESIGN\nPROJECT', hud:'ALADIN APP REDESIGN PROJECT' },
     { key:'seven',  z:45, x:69, y:31, kind:'red',  category:'VISUAL DESIGN', name:'7ELEVEN CI\nREDESIGN\nPROJECT', hud:'7ELEVEN CI REDESIGN PROJECT' },
@@ -38,6 +38,7 @@
   const hovered = new Set();
   const pending = new Map();
   let galaxy=null, sceneRef=null, api=null, enterTimestamp=0;
+  const reducedMotionQuery=matchMedia('(prefers-reduced-motion: reduce)');
   let satelliteActive=false, contactBackdrop=false;
   let returnTravel=INITIAL_TRAVEL;
   let exploreFog=null;
@@ -145,7 +146,9 @@
     // During the distance crossfade a 2×2px bright point replaces the GLB and flare.
     const pinpoint=document.createElement('span');pinpoint.className='orbit-planet-pinpoint';pinpoint.setAttribute('aria-hidden','true');
     const copy=document.createElement('span');copy.className='orbit-project-copy';
-    const arrow=document.createElement('span');arrow.className='orbit-project-arrow'; arrow.textContent='↟';
+    const arrow=document.createElement('span');arrow.className='orbit-project-arrow';arrow.setAttribute('aria-hidden','true');
+    const arrowGlyph=document.createElement('span');arrowGlyph.className='orbit-project-arrow-glyph';arrowGlyph.textContent='▲';arrow.appendChild(arrowGlyph);
+    const text=document.createElement('span');text.className='orbit-project-text';
     const cat=document.createElement('span');cat.className='orbit-project-category';cat.textContent=p.category;
     // Keep the project name at its approved size; de-emphasize only the
     // two descriptors below (REDESIGN PROJECT / BROCHURE DESIGN / PROMOTION WEBSITE).
@@ -155,9 +158,9 @@
     name.appendChild(primary);
     if(descriptorLines.length){
       const secondary=document.createElement('span');secondary.className='orbit-project-name-secondary';
-      secondary.textContent=descriptorLines.join('\n');name.appendChild(secondary);
+      secondary.textContent=descriptorLines.join(' ');name.appendChild(secondary);
     }
-    copy.append(arrow,cat,name);b.append(halo,glint,pinpoint,copy); holder.appendChild(b);
+    text.append(cat,name);copy.append(arrow,text);b.append(halo,glint,pinpoint,copy); holder.appendChild(b);
     b.addEventListener('pointerenter',event=>{
       if(!b.classList.contains('is-frontmost'))return;
       hovered.add(p.key);
@@ -444,7 +447,43 @@
     pts.renderOrder=-12;
     const group=new THREE.Group();
     group.add(pts);group.visible=false;
-    return {group,material};
+    // Sparse, low-energy 3D dust glimmers; project lights remain much brighter.
+    const sparkleCount=640,sparklePositions=new Float32Array(sparkleCount*3),sparkleSeeds=new Float32Array(sparkleCount);
+    for(let i=0;i<sparkleCount;i++){
+      const depth=i<140?2600+Math.random()*4900:7500+Math.random()*30500,halfHeight=depth*vFov;
+      sparklePositions[i*3]=(Math.random()*2-1)*halfHeight*1.65;
+      sparklePositions[i*3+1]=(Math.random()*2-1)*halfHeight*1.10;
+      sparklePositions[i*3+2]=-depth;sparkleSeeds[i]=Math.random();
+    }
+    const sparkleGeometry=new THREE.BufferGeometry();
+    sparkleGeometry.setAttribute('position',new THREE.BufferAttribute(sparklePositions,3));
+    sparkleGeometry.setAttribute('aSeed',new THREE.BufferAttribute(sparkleSeeds,1));
+    const sparkleMaterial=new THREE.ShaderMaterial({transparent:true,depthTest:true,depthWrite:false,
+      blending:THREE.AdditiveBlending,uniforms:{uTime:{value:0},uOpacity:{value:0},uMotion:{value:1},
+        uPixelRatio:{value:api.stage.renderer.getPixelRatio()}},
+      vertexShader:`attribute float aSeed;uniform float uTime,uMotion,uPixelRatio;
+        varying float vPulse,vSeed;
+        void main(){float t=uTime*uMotion;vec3 p=position;vSeed=aSeed;
+          p.x+=sin(t*(.08+aSeed*.04)+aSeed*47.)*(60.+aSeed*80.);
+          p.y+=cos(t*(.06+aSeed*.03)+aSeed*61.)*(45.+aSeed*55.);
+          p.z+=sin(t*.025+aSeed*33.)*45.;
+          vec4 view=modelViewMatrix*vec4(p,1.);gl_Position=projectionMatrix*view;
+          gl_PointSize=clamp((1.6+aSeed*2.)*sqrt(9000./max(3500.,-view.z)),1.1,3.6)*uPixelRatio;
+          float pulse=.25+.75*pow(.5+.5*sin(t*(.24+aSeed*.28)+aSeed*83.),2.);
+          vPulse=mix(.45,pulse,uMotion);
+        }`,
+      fragmentShader:`uniform float uOpacity;varying float vPulse,vSeed;
+        void main(){vec2 q=(gl_PointCoord-.5)*2.;float r=length(q);
+          float core=exp(-r*r*5.);
+          float cross=(exp(-abs(q.x)*14.)*exp(-abs(q.y)*5.)+exp(-abs(q.y)*14.)*exp(-abs(q.x)*5.))*.18;
+          float soft=min(1.,core+cross)*(1.-smoothstep(.65,1.,r));
+          vec3 tint=mix(vec3(.65,.76,1.),vec3(1.,.96,.88),vSeed);
+          gl_FragColor=vec4(tint,soft*.23*uOpacity*(.50+.50*vSeed)*vPulse);}`});
+    const sparkles=new THREE.Points(sparkleGeometry,sparkleMaterial);
+    sparkles.name='Explore quiet drifting sparkles';sparkles.frustumCulled=false;sparkles.renderOrder=-11;
+    sparkles.raycast=()=>{};sparkles.userData={count:sparkleCount,maxAlpha:.23,maxCssSize:3.6};group.add(sparkles);
+    window.addEventListener('pagehide',event=>{if(!event.persisted){sparkleGeometry.dispose();sparkleMaterial.dispose();}});
+    return {group,material,sparkles,sparkleMaterial};
   }
   // A real, continuously animated, depth-layered spiral galaxy. No PNG or video
   // mapped to a plane. Its stars/dust are generated as 3D point geometry and
@@ -653,6 +692,7 @@
       group.visible=false;
       sceneRef.add(group);
       meshes.set(p.key,{group,spin,copy,materials,p,index:i,revealed:active,dragging:false,pauseSpinUntil:0,inertia:null});
+      window.ClearOrbitCinematic?.finishPlanet?.(copy,p.kind);
     }
     console.info('[EXPLORE] original 3D GLBs loaded',meshes.size,'project planets');
   }
@@ -920,18 +960,23 @@
       // Background and the visible galactic ellipse never rotate as one object.
       galaxy.group.rotation.z=0;
       galaxy.material.uniforms.uTime.value=time;
+      galaxy.sparkleMaterial.uniforms.uTime.value=time;
+      galaxy.sparkleMaterial.uniforms.uOpacity.value=galaxy.material.uniforms.uOpacity.value;
+      galaxy.sparkleMaterial.uniforms.uMotion.value=reducedMotionQuery.matches?0:1;
+      galaxy.sparkleMaterial.uniforms.uPixelRatio.value=api.stage.renderer.getPixelRatio();
       // Time from Stage3D is ALREADY in seconds. Feed it without the old
       // 1/1000 factor: dust, core, spiral light and blue gas move via shaders.
       // Orbital animation is GPU-driven around (-370, 105), without touching
       // Three.js mesh rotations (which would displace the nebula's pivot).
       galaxy.spiral.material.uniforms.uTime.value=time;
+      const galaxyApproach=clamp((travel-INITIAL_TRAVEL)/(V42.end-INITIAL_TRAVEL),0,1);
       const targetGalaxyStrength=(satelliteActive||contactBackdrop)
-        ? .94 : clamp((travel-24)/43,0,.94);
+        ? .94 : .055+.885*Math.pow(galaxyApproach,2.2);
       galaxy.spiral.material.uniforms.uOpacity.value=ease(
         galaxy.spiral.material.uniforms.uOpacity.value,targetGalaxyStrength,dtime,.9);
     }
     if(satelliteActive || contactBackdrop)return;
-  
+    const arrowEnabled=active && !selected && !root.classList.contains('has-project-detail') && !window.ClearOrbitLogoNavigation?.state.shortcut && !reducedMotionQuery.matches;
     const viewWidth=1440,viewHeight=1024;
     const stageRect=root.getBoundingClientRect();
     const scale=stageRect.width/viewWidth || 1;
@@ -949,6 +994,28 @@
       // -> the real GLB silhouette gradually replaces the light at matched diameter.
       // Fade both layers together only at the final portion of the approach.
       const distanceToPlanet=cam.position.distanceTo(m.group.position);
+      const proximity=1-clamp((distanceToPlanet-1600)/12000,0,1);
+      const arrowState=m.arrowState||(m.arrowState={phase:0,lift:0,period:2.2});
+      // One calm cycle: float by the text, accelerate toward the planet,
+      // then a short, fast recoil. Distance only mildly changes the cadence.
+      arrowState.period=2.2-.5*(proximity*proximity*(3-2*proximity));
+      if(arrowEnabled)arrowState.phase=(arrowState.phase+dtime/arrowState.period)%1;
+      const phase=arrowState.phase,amplitude=10+2*proximity;
+      let targetLift=0;
+      // Smooth endpoint velocities prevent a sudden kick at the planet.
+      if(phase<.18){
+        const t=phase/.18;targetLift=.20*Math.pow(Math.sin(Math.PI*t),2);
+      }else if(phase<.72){
+        const t=(phase-.18)/.54;
+        targetLift=amplitude*(1-Math.cos(Math.PI*t))*.5;
+      }else{
+        const t=(phase-.72)/.28;
+        targetLift=amplitude*(1+Math.cos(Math.PI*t))*.5;
+      }
+      arrowState.lift=ease(arrowState.lift,arrowEnabled?targetLift:0,dtime,arrowEnabled?.012:.10);
+      if(reducedMotionQuery.matches||(!arrowEnabled&&Math.abs(arrowState.lift)<.001)){arrowState.lift=0;arrowState.phase=0;}
+      button.querySelector('.orbit-project-arrow-glyph').style.transform=`translate3d(0,${(-arrowState.lift).toFixed(3)}px,0)`;
+
       const progress=clamp((distanceToPlanet-DISTANT_LIGHT.start)/
                            (DISTANT_LIGHT.end-DISTANT_LIGHT.start),0,1);
       const smoothstep=(a,b,x)=>{const t=clamp((x-a)/(b-a),0,1);return t*t*(3-2*t);};
@@ -991,7 +1058,7 @@
         if(Math.abs(m.spin.rotation.z)<.00015)m.spin.rotation.z=0;
       }
       if(!m.dragging && !m.restoreRotation && !m.inertia && performance.now()>=m.pauseSpinUntil)
-        m.spin.rotation.y+=dtime*.35*(hover?1.3:1); // resume 1.2s after release
+        m.spin.rotation.y+=dtime*.525*(hover?1.3:1); // resume 1.2s after release
       if(m.revealed){
         // The mesh becomes completely invisible before fog can leave a dark silhouette.
         // The bright point remains in DOM screen space and is not darkened by scene fog.
@@ -1036,13 +1103,46 @@
       const pixels=Math.abs(edge.x-screen.x)*window.innerWidth/scale;
       const cameraDist=distanceToPlanet;
       const visible=cameraDist>cameraRef.near+70 && cameraDist<78000 && x>-pixels && x<viewWidth+pixels && y>-pixels && y<viewHeight+pixels && m.revealed && screen.z>-1 && screen.z<1;
-      distantPoints.push({x,y,visible,amount:farSpread*entrance});
+      distantPoints.push({x,y,visible,amount:farSpread,entrance,distance:cameraDist,
+        front:screen.z>-1 && screen.z<1 && cameraDist<78000 && m.revealed,
+        radius:Math.max(3,pixels*.5*meshFade+3*(1-meshFade))});
       button.style.display=visible?'block':'none';
       if(!visible)button.classList.remove('is-pinpoint');
       if(visible){
         const size=clamp(pixels,26,800);
         button.style.left=x.toFixed(2)+'px';button.style.top=y.toFixed(2)+'px';
         button.style.width=size.toFixed(2)+'px';button.style.height=size.toFixed(2)+'px';
+        // Label anchoring ignores the decorative hover scale. During a settled
+        // view, freeze screen coordinates so subpixel projection drift cannot
+        // redraw/jitter the text while its independent triangle is bouncing.
+        const detail=root.classList.contains('has-project-detail');
+        const labelKey=[target.toFixed(4),selected||'',detail,stageRect.width.toFixed(1),stageRect.height.toFixed(1)].join(':');
+        const settled=!entering&&(selected?(!!focus&&focus.progress>=1):(Math.abs(target-travel)<.0001&&(!returning||returning.progress>=1)));
+        const basePixels=clamp(pixels/Math.max(.001,m.group.scale.x),26,800);
+        const labelY=y+basePixels*.5+(detail?12:17);
+        if(!settled||!m.labelAnchor||!m.labelAnchor.locked||m.labelAnchor.key!==labelKey)
+          m.labelAnchor={x:settled?Math.round(x):x,y:settled?Math.round(labelY):labelY,key:labelKey,locked:settled};
+        const copy=button.querySelector('.orbit-project-copy');
+        // Match CSS's fixed-point coordinates before compensating its parent's
+        // changing hit-circle size. No camera or hit-target coordinates change.
+        const q=v=>Math.round(v*64)/64;
+        const left=q(+x.toFixed(2))-q(+size.toFixed(2))*.5;
+        const top=q(+y.toFixed(2))-q(+size.toFixed(2))*.5;
+        copy.style.left=(m.labelAnchor.x-left).toFixed(4)+'px';
+        copy.style.top=(m.labelAnchor.y-top).toFixed(4)+'px';
+        const text=copy.querySelector('.orbit-project-text'),arrowSlot=copy.querySelector('.orbit-project-arrow');
+        if(settled&&button.classList.contains('is-label-visible')){
+          // Cancel the browser's fractional hit-circle layout at the compositing
+          // layer too. Only the single visible label needs this screen read.
+          const rect=copy.getBoundingClientRect(),dpr=window.devicePixelRatio||1;
+          const snap=v=>Math.round(v*dpr)/dpr;
+          const dx=(snap(stageRect.left+(m.labelAnchor.x-205)*scale)-rect.left)/scale;
+          const dy=(snap(stageRect.top+m.labelAnchor.y*scale)-rect.top)/scale;
+          const correction=`translate3d(${dx.toFixed(6)}px,${dy.toFixed(6)}px,0)`;
+          text.style.transform=correction;arrowSlot.style.transform=correction;
+        }else{text.style.transform='translateZ(0)';arrowSlot.style.transform='none';}
+
+
         // The 5px minimum light point is a DOM overlay unaffected by dark WebGL fog.
         // The existing DOM hit target stays the same size and exactly centered.
         button.style.opacity=entrance.toFixed(4);
@@ -1088,15 +1188,20 @@
       if(dist>-3 && dist<11 && Math.abs(dist)<nearestDistance){nearest=p;nearestDistance=Math.abs(dist);}
       // Visiting by scroll/approach must NOT count: only pick(p) records clicks.
     }
-    // Lines are visible only between distant points; they fade out before
-    // mesh silhouettes emerge. Keep the 0.6px hairline, but make the
-    // constellation just slightly easier to see (13% -> 16% peak alpha).
+    // Guides persist near the planets too. Stop at each sphere's rim so
+    // screen-space SVG lines never cross over the physical planet surface.
     for(let i=0;i<constellationLines.length;i++){
       const a=distantPoints[i],b=distantPoints[i+1],line=constellationLines[i];
-      const opacity=a&&b&&a.visible&&b.visible ?
-        Math.min(a.amount,b.amount)*.16 : 0;
-      line.setAttribute('x1',a?.x||0);line.setAttribute('y1',a?.y||0);
-      line.setAttribute('x2',b?.x||0);line.setAttribute('y2',b?.y||0);
+      const dx=(b?.x||0)-(a?.x||0),dy=(b?.y||0)-(a?.y||0),distance=Math.hypot(dx,dy);
+      const gapA=(a?.radius||3)+5,gapB=(b?.radius||3)+5;
+      const valid=a&&b&&a.front&&b.front&&distance>gapA+gapB;
+      const distanceFade=valid?clamp((Math.min(a.distance,b.distance)-1800)/30000,0,1):0;
+      const strength=distanceFade*distanceFade*(3-2*distanceFade);
+      const opacity=valid?Math.min(a.entrance,b.entrance)*(.045+.275*strength):0;
+      line.style.strokeWidth=(.60+.25*strength).toFixed(3);
+      const ux=distance?dx/distance:0,uy=distance?dy/distance:0;
+      line.setAttribute('x1',(a?.x||0)+ux*gapA);line.setAttribute('y1',(a?.y||0)+uy*gapA);
+      line.setAttribute('x2',(b?.x||0)-ux*gapB);line.setAttribute('y2',(b?.y||0)-uy*gapB);
       line.style.opacity=opacity.toFixed(4);
     }
     const activeLabel=selected||labelCandidate;

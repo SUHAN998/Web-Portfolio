@@ -229,3 +229,14 @@ html.orbit-shortcut-open .orbit-logo-ui{pointer-events:none}
   pointer-events:none;
 }
 @media(prefers-reduced-motion:reduce){.orbit-personal-logo{transition-duration:.01ms}}
+
+/* Match project section kickers in BOTH the logo shortcut and ending CONTACT. */
+.orbit-contact-direct h2,
+.orbit-contact-direct.is-story h2,
+.orbit-contact-direct-info span,
+.orbit-contact-direct.is-story .orbit-contact-direct-info span,
+.orbit-shortcut-contact-card h2,
+.orbit-shortcut-contact-field>span{
+  font-weight:300;
+  color:var(--orbit-chapter-ink,#739DF8);
+}

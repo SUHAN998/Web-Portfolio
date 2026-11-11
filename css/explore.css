@@ -21,8 +21,8 @@
 .orbit-planet-halo{
   position:absolute;inset:-38%;border-radius:50%;pointer-events:none;z-index:0;
   background:radial-gradient(circle,
-    rgba(223,241,255,.40) 0%,rgba(145,198,255,.36) 20%,
-    rgba(88,146,232,.22) 42%,rgba(52,101,185,.07) 65%,transparent 86%);
+    rgba(253,254,255,.48) 0%,rgba(247,251,255,.432) 20%,
+    rgba(215,233,255,.264) 42%,rgba(52,101,185,.084) 65%,transparent 86%);
   opacity:calc(.525 * var(--orbit-ray-fade,1));transform:scale(var(--orbit-halo-scale,1));
   transition:opacity .52s cubic-bezier(.22,1,.36,1),filter .52s ease;
   filter:blur(1.3px);
@@ -30,8 +30,8 @@
   mask-image:radial-gradient(circle at center,transparent 0 var(--orbit-halo-mask-inner,0px),#000 var(--orbit-halo-mask-outer,0px));
 }
 .orbit-planet.is-red .orbit-planet-halo{background:radial-gradient(circle,
-    rgba(255,233,226,.42) 0%,rgba(255,177,165,.36) 20%,
-    rgba(243,103,119,.24) 42%,rgba(190,55,88,.08) 65%,transparent 86%)}
+    rgba(255,254,253,.504) 0%,rgba(255,248,247,.432) 20%,
+    rgba(255,220,226,.288) 42%,rgba(190,55,88,.096) 65%,transparent 86%)}
 .orbit-planet:hover .orbit-planet-halo,.orbit-planet:focus-visible .orbit-planet-halo{
   opacity:calc(.875 * var(--orbit-ray-fade,1));filter:blur(1.5px) brightness(1.15)}
 
@@ -86,17 +86,19 @@
 .orbit-planet.is-pinpoint:focus-visible .orbit-planet-pinpoint{box-shadow:0 0 4px 1px #fff}
 /* Reference labels sit BELOW each planet, precisely horizontally centered.
    Visibility is decided by JS across all six planets (one label maximum). */
-.orbit-project-copy{position:absolute;width:410px;top:calc(100% + 17px);left:50%;transform:translateX(-50%);text-align:center;opacity:0;pointer-events:none;transition:opacity .28s ease;white-space:normal}
+.orbit-project-copy{--orbit-arrow-slot:calc(30px * var(--orbit-type-adjust,1));position:absolute;width:410px;top:calc(100% + 17px);left:50%;transform:translateX(-50%);text-align:center;opacity:0;pointer-events:none;transition:opacity .28s ease;white-space:normal}
 .orbit-planet.is-label-visible .orbit-project-copy{opacity:1}
-.orbit-project-arrow{display:block;font-size:calc(30px * var(--orbit-type-adjust,1));line-height:1;color:#91caff;margin:0 auto 9px;font-weight:500;text-align:center}
+.orbit-project-arrow{position:absolute;left:0;top:0;width:100%;height:var(--orbit-arrow-slot);display:block;font-size:calc(18px * var(--orbit-type-adjust,1));line-height:1.666667;color:#91caff;margin:0;font-weight:500;text-align:center}
 .orbit-planet.is-red .orbit-project-arrow{color:#ff8c91}
+.orbit-project-arrow-glyph{display:inline-block;will-change:transform;backface-visibility:hidden}
+.orbit-project-text{display:block;padding-top:calc(var(--orbit-arrow-slot) + 9px);contain:layout paint;isolation:isolate;transform:translateZ(0);backface-visibility:hidden}
 .orbit-project-category{display:block;color:#91caff;letter-spacing:.04em;font-size:calc(20px * var(--orbit-type-adjust,1));font-weight:550;line-height:1.28;text-align:center}
 .orbit-planet.is-red .orbit-project-category{color:#ff8c91}
-.orbit-project-name{display:block;color:#f7f9fe;white-space:pre-line;font-size:calc(30px * var(--orbit-type-adjust,1));font-weight:740;line-height:1.18;letter-spacing:-.025em;margin-top:12px;text-align:center}
+.orbit-project-name{display:block;color:#f7f9fe;white-space:pre-line;font-size:calc(30px * var(--orbit-type-adjust,1));font-weight:740;line-height:1.18;letter-spacing:-.025em;margin-top:6.35px;text-align:center}
 /* v1.50.139: project names remain unchanged; descriptors are 80% size.
    Inherits the existing responsive font multiplier and focus-state line height. */
 .orbit-project-name-primary{display:block}
-.orbit-project-name-secondary{display:block;white-space:pre-line;font-size:.8em;color:#B0B0DA;font-weight:620;line-height:inherit}
+.orbit-project-name-secondary{display:block;white-space:nowrap;margin-top:calc(.105em + 3px);font-size:calc(.8em * 2 / 3);color:#B0B0DA;font-weight:620;line-height:inherit}
 /* HUD geometry measured from 01_MAIN_FLOW.pdf p.6 (1440×1024).
    left 452, right 988, signal/title top 887, divider y927, lower controls y936. */
 .orbit-hud{position:absolute;left:452px;top:887px;width:536px;height:69px;text-align:left;opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s cubic-bezier(.16,1,.3,1);pointer-events:none}
@@ -128,8 +130,8 @@
 @media(prefers-reduced-motion:reduce){.orbit-hud,.orbit-explore,.profile.orbit-is-exiting,.orbit-planet{transition-duration:.05s!important}.orbit-wheel-help{animation:none}}
 
 /* v1.37: distant-only, hairline constellation threads behind the points. */
-.orbit-constellation{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:0}
-.orbit-constellation-line{stroke:#fff;stroke-width:.6;stroke-linecap:round;opacity:0;vector-effect:non-scaling-stroke;transition:opacity .24s ease}
+.orbit-constellation{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:0;transition:filter .35s ease}
+.orbit-constellation-line{stroke:#fff;stroke-width:.85;stroke-linecap:round;opacity:0;vector-effect:non-scaling-stroke;transition:opacity .24s ease,stroke-width .24s ease}
 /* Tight, crisp + diffraction ONLY for the distant-light state. */
 .orbit-planet.is-pinpoint .orbit-planet-glint{width:22px;height:22px;opacity:.96!important;filter:drop-shadow(0 0 1px rgba(229,244,255,.48))}
 .orbit-planet.is-pinpoint .orbit-planet-glint::before{height:1.2px;max-height:none;background:radial-gradient(ellipse at center,#fff 0%,rgba(249,252,255,.95) 10%,rgba(212,232,255,.65) 30%,rgba(165,203,255,.13) 67%,transparent 100%)}
@@ -229,3 +231,6 @@
   opacity:calc(.48 * var(--orbit-ray-fade,1) + .96 * var(--orbit-far-glint,0));
   filter:drop-shadow(0 0 2px rgba(149,204,255,.16));
 }
+
+/* Move only the triangle slot; text coordinates remain unchanged. */
+.orbit-project-arrow{top:12px}
